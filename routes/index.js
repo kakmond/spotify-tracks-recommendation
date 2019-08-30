@@ -14,6 +14,8 @@ var db = new sqlite3.Database("spotifyDb");
 // create sqlite table
 db.run("CREATE TABLE IF NOT EXISTS user (user_id INTEGER PRIMARY KEY, country TEXT, access_token TEXT, refresh_token TEXT)");
 db.run("CREATE TABLE IF NOT EXISTS track (user_id INTEGER PRIMARY KEY, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.run("CREATE TABLE IF NOT EXISTS popularity25 (user_id INTEGER, track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.run("CREATE TABLE IF NOT EXISTS popularity75 (user_id INTEGER, track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 
 /**
  * Generates a random string containing numbers and letters
@@ -32,18 +34,73 @@ var generateRandomString = function (length) {
 
 var stateKey = 'spotify_auth_state';
 
+
+function authOptions(code) {
+  return {
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      code: code,
+      redirect_uri: redirect_uri,
+      grant_type: 'authorization_code'
+    },
+    headers: {
+      'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+    },
+    json: true
+  };
+}
+
+function recommendationOptions(access_token, artistId, trackId, popularity) {
+  return {
+    url: 'https://api.spotify.com/v1/recommendations?' +
+      querystring.stringify({
+        seed_artists: artistId,
+        seed_tracks: trackId,
+        target_popularity: popularity,
+      }),
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  }
+};
+
+function profileOptions(access_token) {
+  return {
+    url: 'https://api.spotify.com/v1/me',
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  }
+};
+
 router.get('/song/:id', checkToken, function (req, res) {
+
   let access_token = req.cookies.access_token;
-  console.log(req.params.id)
+  let user_id = req.cookies.user_id;
+
   let trackOptions = {
     url: 'https://api.spotify.com/v1/tracks/' + req.params.id,
     headers: { 'Authorization': 'Bearer ' + access_token },
     json: true
   };
-  // Get track's detail
-  request.get(trackOptions, function (error, response, body) {
-    res.render('song', {
-      track: body
+  // get track's detail
+  request.get(trackOptions, function (error, response, trackBody) {
+    let artistIds = trackBody.artists.map((artist) => artist.id).join(',')
+    let trackId = trackBody.id
+    // get recommendations based on popularity of 25 and 75
+    request.get(recommendationOptions(access_token, artistIds, trackId, 25), function (error, response, popularity25body) {
+      console.log(popularity25body.tracks[0].id)
+      // store data in popularity25 table
+      for (let index = 0; index < popularity25body.tracks.length; index++) {
+        db.run("INSERT or REPLACE INTO popularity25 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity);
+      }
+      request.get(recommendationOptions(access_token, artistIds, trackId, 75), function (error, response, popularity75body) {
+        // store data in popularity75 table
+        for (let index = 0; index < popularity75body.tracks.length; index++) {
+          db.run("INSERT or REPLACE INTO popularity75 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity);
+        }
+        res.render('song', {
+          track: trackBody
+        });
+      });
     });
   });
 })
@@ -52,14 +109,8 @@ router.get('/', checkToken, function (req, res) {
   let access_token = req.cookies.access_token;
   let refresh_token = req.cookies.refresh_token;
 
-  let profileOptions = {
-    url: 'https://api.spotify.com/v1/me',
-    headers: { 'Authorization': 'Bearer ' + access_token },
-    json: true
-  };
-
   // retrive profile information
-  request.get(profileOptions, function (error, response, body) {
+  request.get(profileOptions(access_token), function (error, response, body) {
     // store data in user table
     db.run("INSERT or REPLACE INTO user (user_id, country, access_token, refresh_token) VALUES (?,?,?,?)", body.id, body.country, access_token, refresh_token);
     res.render('index', {
@@ -72,9 +123,6 @@ router.get('/', checkToken, function (req, res) {
 
 router.get('/callback', function (req, res) {
 
-  // your application requests refresh and access tokens
-  // after checking the state parameter
-
   let code = req.query.code || null;
   let state = req.query.state || null;
   let storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -83,61 +131,29 @@ router.get('/callback', function (req, res) {
     res.redirect('/');
   } else {
     res.clearCookie(stateKey);
-    let authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
-      form: {
-        code: code,
-        redirect_uri: redirect_uri,
-        grant_type: 'authorization_code'
-      },
-      headers: {
-        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-      },
-      json: true
-    };
-
-    request.post(authOptions, function (error, response, body) {
+    request.post(authOptions(code), function (error, response, body) {
       if (!error && response.statusCode === 200) {
-
         let access_token = body.access_token
         let refresh_token = body.refresh_token
 
         res.cookie('access_token', access_token);
         res.cookie('refresh_token', refresh_token);
+        // retrive current user's id
+        request.get(profileOptions(access_token), function (error, response, body) {
+          res.cookie('user_id', body.id);
+          res.redirect('/');
+        });
       } else {
         // handle error
+        res.redirect('/');
       }
-      res.redirect('/');
     });
   }
 });
 
-router.get('/refresh_token', function (req, res) {
-
-  // requesting access token from refresh token
-  let refresh_token = req.query.refresh_token;
-  let authOptions = {
-    url: 'https://accounts.spotify.com/api/token',
-    headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
-    form: {
-      grant_type: 'refresh_token',
-      refresh_token: refresh_token
-    },
-    json: true
-  };
-
-  request.post(authOptions, function (error, response, body) {
-    if (!error && response.statusCode === 200) {
-      var access_token = body.access_token;
-      res.send({
-        'access_token': access_token
-      });
-    }
-  });
-});
-
 router.get('/tracks', checkToken, function (req, res) {
   let access_token = req.cookies.access_token;
+  let user_id = req.cookies.user_id;
 
   let trackOptions = {
     url: 'https://api.spotify.com/v1/me/top/tracks?limit=10',
@@ -145,22 +161,13 @@ router.get('/tracks', checkToken, function (req, res) {
     json: true
   };
 
-  let profileOptions = {
-    url: 'https://api.spotify.com/v1/me',
-    headers: { 'Authorization': 'Bearer ' + access_token },
-    json: true
-  };
-
-  // retrive current user's id
-  request.get(profileOptions, function (error, response, body) {
-    // retrive top tracks
-    request.get(trackOptions, function (error, response, tracks) {
-      let trackSQL = tracks.items.map((track) => track.id); // construct an array of ids
-      trackSQL.unshift(body.id) // add user's id at the beginning of an array
-      db.run("INSERT or REPLACE INTO track (user_id, track_1, track_2, track_3, track_4, track_5, track_6, track_7, track_8, track_9, track_10) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", trackSQL);
-      res.render('tracks', {
-        tracks: tracks.items
-      });
+  // retrive top tracks
+  request.get(trackOptions, function (error, response, tracks) {
+    let trackSQL = tracks.items.map((track) => track.id); // construct an array of ids
+    trackSQL.unshift(user_id) // add user's id at the beginning of an array
+    db.run("INSERT or REPLACE INTO track (user_id, track_1, track_2, track_3, track_4, track_5, track_6, track_7, track_8, track_9, track_10) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", trackSQL);
+    res.render('tracks', {
+      tracks: tracks.items
     });
   });
 }
