@@ -50,6 +50,23 @@ function authOptions(code) {
   };
 }
 
+function trackOptions(trackId, access_token) {
+  return {
+    url: 'https://api.spotify.com/v1/tracks/' + trackId,
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  }
+};
+
+function getTopTracksOptions(access_token) {
+  return {
+    url: 'https://api.spotify.com/v1/me/top/tracks?limit=10',
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  }
+}
+
+
 function recommendationOptions(access_token, artistId, trackId, popularity) {
   return {
     url: 'https://api.spotify.com/v1/recommendations?' +
@@ -75,14 +92,8 @@ router.get('/song/:id', checkToken, function (req, res) {
 
   let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
-
-  let trackOptions = {
-    url: 'https://api.spotify.com/v1/tracks/' + req.params.id,
-    headers: { 'Authorization': 'Bearer ' + access_token },
-    json: true
-  };
   // get track's detail
-  request.get(trackOptions, function (error, response, trackBody) {
+  request.get(trackOptions(req.params.id, access_token), function (error, response, trackBody) {
     let artistIds = trackBody.artists.map((artist) => artist.id).join(',')
     let trackId = trackBody.id
     // get recommendations based on popularity of 25 and 75
@@ -155,14 +166,9 @@ router.get('/tracks', checkToken, function (req, res) {
   let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
 
-  let trackOptions = {
-    url: 'https://api.spotify.com/v1/me/top/tracks?limit=10',
-    headers: { 'Authorization': 'Bearer ' + access_token },
-    json: true
-  };
 
   // retrive top tracks
-  request.get(trackOptions, function (error, response, tracks) {
+  request.get(getTopTracksOptions(access_token), function (error, response, tracks) {
     let trackSQL = tracks.items.map((track) => track.id); // construct an array of ids
     trackSQL.unshift(user_id) // add user's id at the beginning of an array
     db.run("INSERT or REPLACE INTO track (user_id, track_1, track_2, track_3, track_4, track_5, track_6, track_7, track_8, track_9, track_10) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", trackSQL);
