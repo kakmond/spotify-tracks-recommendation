@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="text-center">
+        <h1 style="font-size: 38px" class="lead text-bold text-success pt-2 pb-2">Top-10 <span class="text-dark">
+                Tracks</span>
+        </h1>
+    </div>
+    <ul class="list-group list-group-flush">
+        {{#each tracks}}
+        <li class="media">
+            <img src={{this.album.images.[0].url}} style="width:75px;" class="ml-3 my-2 rounded-circle">
+            <div class="media-body list-group-item">
+                <h5 class="mt-0 mb-1"><a href="/song/{{this.id}}" class="text-success">{{this.name}}</a></h5>
+                <footer class="blockquote-footer">
+                    <cite title="Source Title">
+                        {{#each this.artists}}
+                        {{this.name}}{{#if @last}}{{else}}<span>,</span>{{/if}}
+                        {{/each}}
+                    </cite>
+                </footer>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+</div>
+
+<style>
+    .tracks {
+        width: 600px;
+    }
+</style>

@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="pt-5 pb-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-center">
+                    <img src="{{track.album.images.[0].url}}" style="border-radius: 50%; height: 250px">
+                </div>
+                <ul class="pt-3 list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a class="text-reset lead">Track name</a>
+                        <footer><a class="text-muted">{{track.name}}</a></footer>
+                    </li>
+                </ul>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a class="text-reset lead">Id</a>
+                        <footer><a class="text-muted">{{track.id}}</a></footer>
+                    </li>
+                </ul>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a class="text-reset lead">Release date</a>
+                        <footer><a class="text-muted">{{track.album.release_date}}</a></footer>
+                    </li>
+                </ul>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a class="text-reset lead">Track URI</a>
+                        <footer><a class="text-success"
+                                href="{{track.external_urls.spotify}}">{{track.external_urls.spotify}}</a>
+                        </footer>
+                    </li>
+                </ul>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a class="text-reset lead">Artist URL</a>
+                        <footer><a class="text-success"
+                                href="{{track.artists.[0].external_urls.spotify}}">{{track.artists.[0].external_urls.spotify}}</a>
+                        </footer>
+                    </li>
+                </ul>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a class="text-reset lead">Artist Name</a>
+                        <footer><a class="text-muted">{{track.artists.[0].name}}</a></footer>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
