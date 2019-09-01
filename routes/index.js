@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-
-// spotify
 var request = require('request'); // "Request" library
 var querystring = require('querystring');
 
@@ -11,7 +9,7 @@ var client_secret = '2d595745a2f543cd9bc00a67e4d87e5c'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 var sqlite3 = require('sqlite3');
 var db = new sqlite3.Database("spotifyDb");
-// create sqlite table
+// create sqlite tables
 db.run("CREATE TABLE IF NOT EXISTS user (user_id INTEGER PRIMARY KEY, country TEXT, access_token TEXT, refresh_token TEXT)");
 db.run("CREATE TABLE IF NOT EXISTS track (user_id INTEGER PRIMARY KEY, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.run("CREATE TABLE IF NOT EXISTS popularity25 (user_id INTEGER, track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
@@ -33,7 +31,6 @@ var generateRandomString = function (length) {
 };
 
 var stateKey = 'spotify_auth_state';
-
 
 function authOptions(code) {
   return {
@@ -89,16 +86,17 @@ function profileOptions(access_token) {
 };
 
 router.get('/song/:id', checkToken, function (req, res) {
-
   let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
   // get track's detail
   request.get(trackOptions(req.params.id, access_token), function (error, response, trackBody) {
-    let artistIds = trackBody.artists.map((artist) => artist.id).join(',')
+    let artistIds = trackBody.artists.map((artist) => artist.id).join(',') // get artist id as array
     let trackId = trackBody.id
+    // delete old popularity records if exist
+    db.run("DELETE FROM popularity25 WHERE track_id = ? ", trackId);
+    db.run("DELETE FROM popularity75 WHERE track_id = ? ", trackId);
     // get recommendations based on popularity of 25 and 75
     request.get(recommendationOptions(access_token, artistIds, trackId, 25), function (error, response, popularity25body) {
-      console.log(popularity25body.tracks[0].id)
       // store data in popularity25 table
       for (let index = 0; index < popularity25body.tracks.length; index++) {
         db.run("INSERT or REPLACE INTO popularity25 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity);
@@ -133,11 +131,9 @@ router.get('/', checkToken, function (req, res) {
 });
 
 router.get('/callback', function (req, res) {
-
   let code = req.query.code || null;
   let state = req.query.state || null;
   let storedState = req.cookies ? req.cookies[stateKey] : null;
-
   if (state === null || state !== storedState) {
     res.redirect('/');
   } else {
@@ -146,7 +142,6 @@ router.get('/callback', function (req, res) {
       if (!error && response.statusCode === 200) {
         let access_token = body.access_token
         let refresh_token = body.refresh_token
-
         res.cookie('access_token', access_token);
         res.cookie('refresh_token', refresh_token);
         // retrive current user's id
@@ -165,8 +160,6 @@ router.get('/callback', function (req, res) {
 router.get('/tracks', checkToken, function (req, res) {
   let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
-
-
   // retrive top tracks
   request.get(getTopTracksOptions(access_token), function (error, response, tracks) {
     let trackSQL = tracks.items.map((track) => track.id); // construct an array of ids
@@ -194,7 +187,6 @@ router.get('/logout', function (req, res) {
 router.get('/login', function (req, res) {
   let state = generateRandomString(16);
   res.cookie(stateKey, state);
-
   let scope = 'user-read-private user-read-email user-top-read';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
