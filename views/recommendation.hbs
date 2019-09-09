@@ -193,7 +193,7 @@
             <div class="spinner-grow" style="width: 4rem; height: 4rem;" role="status">
             </div>
         </div>
-        <div class="lead">Loading</div>
+        <div class="lead">Gathering all responses</div>
     </div>
 
 </div>
@@ -366,10 +366,6 @@
         // add the track to playlist if user's answer is YES or MAYBE YES
         let shouldAdd = false
         if (currentScore == 3 || currentScore == 4) {
-            let trackId = $("#trackId").text()
-            let artistName = $("#artistName").text()
-            let trackName = $("#trackName").text()
-            console.log(trackId + " " + artistName + " " + trackName)
             shouldAdd = true
         }
         shuffle(randomName)
@@ -400,7 +396,12 @@
             $("#userName" + (index + 1)).html((index + 1) + '. ' + randomName[index])
         }
         if (shouldAdd) {
+            let trackId = $("#trackId").text()
+            let artistName = $("#artistName").text()
+            let trackName = $("#trackName").text()
+            console.log(trackId + " " + artistName + " " + trackName)
             addPlaylist(trackId, trackName, artistName)
+
         }
         $("#loading").hide();
         $("#playlist").show();
@@ -445,6 +446,7 @@
         else if (startRandomFrom == '25') {
             recommendationArray[arrayIndex] = {}
             if (noAnswerCount >= 5) {
+                console.log("CHANGE TO 75")
                 recommendationArray[arrayIndex].list = 75
                 noAnswerCount = 0
                 yesAnswerCount = 0
@@ -459,6 +461,7 @@
         else {
             recommendationArray[arrayIndex] = {}
             if (yesAnswerCount >= 5) {
+                console.log("CHANGE TO 25")
                 recommendationArray[arrayIndex].list = 25
                 noAnswerCount = 0
                 yesAnswerCount = 0
