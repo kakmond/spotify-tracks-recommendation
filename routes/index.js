@@ -4,9 +4,9 @@ var router = express.Router();
 var request = require('request');
 var querystring = require('querystring');
 
-var client_id = 'b950e64dfc1948b6a6ce2018a9d154e8'; // Your client id
-var client_secret = '2d595745a2f543cd9bc00a67e4d87e5c'; // Your secret
-var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+var client_id = 'effb4e77d8764a29a23dc735f6f11dfa'; // Your client id
+var client_secret = 'ef52e8965b47466e812d2d3ce761e582'; // Your secret
+var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
 var sqlite3 = require('sqlite3');
 var db = new sqlite3.Database("spotifyDb");
 // create sqlite tables
@@ -248,7 +248,15 @@ router.post('/recommendation/', checkToken, function (req, res) {
 function checkToken(req, res, next) {
   let token = req.cookies.access_token;
   if (token) {
-    next();
+    // try to retrive profile information
+    request.get(profileOptions(token), function (error, response, body) {
+      if (error) {
+        res.render('login')
+      }
+      else {
+        next();
+      }
+    });
   } else {
     res.render('login')
   }
