@@ -2,8 +2,13 @@
     <div class="pt-5 pb-3">
         <div class="card">
             <div class="card-body">
+
                 <div class="text-center">
+
                     <img src="{{track.album.images.[0].url}}" style="border-radius: 50%; height: 250px">
+                    <footer class="pt-2"><audio controls class="embed-responsive-item">
+                            <source src="{{track.preview_url}}">
+                        </audio></footer>
                 </div>
                 <ul class="pt-3 list-group list-group-flush">
                     <li class="list-group-item">
@@ -15,6 +20,12 @@
                     <li class="list-group-item">
                         <a class="text-reset lead">Id</a>
                         <footer><a class="text-muted">{{track.id}}</a></footer>
+                    </li>
+                </ul>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a class="text-reset lead">Artist Name</a>
+                        <footer><a class="text-muted">{{track.artists.[0].name}}</a></footer>
                     </li>
                 </ul>
                 <ul class="list-group list-group-flush">
@@ -39,13 +50,8 @@
                         </footer>
                     </li>
                 </ul>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <a class="text-reset lead">Artist Name</a>
-                        <footer><a class="text-muted">{{track.artists.[0].name}}</a></footer>
-                    </li>
-                </ul>
             </div>
         </div>
+
     </div>
 </div>
