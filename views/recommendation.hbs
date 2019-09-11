@@ -189,13 +189,7 @@
                 $("#player").html('')
                 $("#player").html("<audio controls src=" + response.preview_url + " class='embed-responsive-item'>  <source> </audio>")
                 $("#trackName").text(response.name)
-                $("#trackId").text(response.id)
                 $("#artistName").text(response.artists[0].name)
-                $("#releaseDate").text(response.album.release_date)
-                $("#trackUrl").text(response.external_urls.spotify)
-                $("#trackUrl").attr("href", response.external_urls.spotify)
-                $("#artistUrl").text(response.artists[0].external_urls.spotify)
-                $("#trackUrl").attr("href", response.artists[0].external_urls.spotify)
                 $("#track").show();
                 $("#user").hide();
                 $("#nextStep").hide();
