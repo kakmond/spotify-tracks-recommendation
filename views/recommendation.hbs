@@ -9,9 +9,9 @@
                                 style="border-radius: 50%; height: 250px">
                             <footer class="pt-2">
                                 <div id="player">
-                                    {{!-- <audio controls class="embed-responsive-item">
+                                    <audio controls class="embed-responsive-item">
                                         <source>
-                                    </audio> --}}
+                                    </audio>
                                 </div>
 
                             </footer>
@@ -24,34 +24,8 @@
                         </ul>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
-                                <a class="text-reset lead">Id</a>
-                                <footer><a id="trackId" class="text-muted"></a></footer>
-                            </li>
-                        </ul>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
                                 <a class="text-reset lead">Artist Name</a>
                                 <footer><a id="artistName" class="text-muted"></a></footer>
-                            </li>
-                        </ul>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <a class="text-reset lead">Release date</a>
-                                <footer><a id="releaseDate" class="text-muted"></a></footer>
-                            </li>
-                        </ul>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <a class="text-reset lead">Track URI</a>
-                                <footer><a class="text-success" id="trackUrl"></a>
-                                </footer>
-                            </li>
-                        </ul>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <a class="text-reset lead">Artist URL</a>
-                                <footer><a class="text-success" id="artistUrl"></a>
-                                </footer>
                             </li>
                         </ul>
                         <ul class="list-group list-group-flush">
@@ -244,6 +218,8 @@
     let user_id = getCookie('user_id')
     let randomTracks25 = {{{ randomTracks25 }}}
     let randomTracks75 = {{{ randomTracks75 }}}
+    console.log(randomTracks25)
+    console.log(randomTracks75)
 
     let randomName = ['James', 'Kitsana', 'Wongsathorn', 'Bruce', 'Sathira', 'Wasuthun', 'Micky', 'Mond', 'Steve', 'Tom']
     let currentScore = 0
@@ -280,8 +256,8 @@
         currentScore = score
         recommendationArray[arrayIndex].answer_a = currentScore
         showLoading()
-        let min = 1,
-            max = 2;
+        let min = 5,
+            max = 10;
         let rand = Math.floor(Math.random() * (max - min + 1) + min); // generate Random number between 5 - 10
         recommendationArray[arrayIndex].waiting_a = rand
         setTimeout(showAnonymousUser, rand * 1000);
@@ -291,8 +267,8 @@
         currentScore = score
         recommendationArray[arrayIndex].answer_b = currentScore
         showLoading()
-        let min = 1,
-            max = 2;
+        let min = 5,
+            max = 10;
         let rand = Math.floor(Math.random() * (max - min + 1) + min); // generate Random number between 5 - 10
         recommendationArray[arrayIndex].waiting_b = rand
         setTimeout(showResult, rand * 1000);
@@ -316,13 +292,12 @@
                 if (random <= 0.1) {
                     $("#userAnswer" + (index + 1)).html(maybeNoButtonHTML())
                     recommendationArray[arrayIndex]["bot" + index + "_a"] = 2
-
                 }
-                else if (random <= 0.3) {
+                else if (random <= 0.1) {
                     $("#userAnswer" + (index + 1)).html(noButtonHTML())
                     recommendationArray[arrayIndex]["bot" + index + "_a"] = 1
                 }
-                else if (random <= 0.6) {
+                else if (random <= 0.1) {
                     $("#userAnswer" + (index + 1)).html(maybeYesButtonHTML())
                     recommendationArray[arrayIndex]["bot" + index + "_a"] = 3
                 }
