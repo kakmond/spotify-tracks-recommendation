@@ -7,7 +7,7 @@
     <ul class="list-group list-group-flush">
         {{#each tracks}}
         <li class="media">
-            <img src={{this.album.images.[0].url}} style="width:75px;" class="mx-3 my-1 rounded-circle">
+            <img src={{this.album.images.[0].url}} style="width:75px;" class="mx-3 mt-4 rounded-circle">
             <div class="media-body list-group-item">
                 <div class="d-flex justify-content-between">
                     <div>
@@ -19,7 +19,17 @@
                                 {{/each}}
                             </cite>
                         </footer>
+                        {{#if this.preview_url}}
+                        <audio controls class="embed-responsive-item pt-2">
+                            <source src="{{this.preview_url}}">
+                        </audio>
+                        {{else}}
+                        <span class="text-muted font-weight-light">
+                            (The track can not be played in your country)
+                        </span>
+                        {{/if}}
                     </div>
+
                     <div>
                         <a href="/recommendation/{{this.id}}" role="button" class="btn btn-outline-info">Suggestion</a>
                     </div>
