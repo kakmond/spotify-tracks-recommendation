@@ -102,7 +102,7 @@
                     </li>
 
                     <li class="list-group-item">
-                        <a class="lead">Do you want to change your rating for this song? <br> Note: only songs that are <u>unanimously</u> chosen for are added to the play list</a>
+                        <a id="notifyText" class="lead"></a>
                         <footer id="repeatAnswer" class="pt-2">
                             <div class="row">
                                 <div class="pl-3">
@@ -159,7 +159,6 @@
                     Step</button>
             </div>
         </div>
-
 
     </div>
     <div id="loading" class="text-center" style="padding-top: 20%; display: none">
@@ -325,6 +324,7 @@
                 }
             }
         }
+        $("#notifyText").html(confirmationText());
         $("#loading").hide();
         $("#playlist").show();
         $("#user").show();
@@ -377,6 +377,7 @@
         $("#user").show();
         $("#repeatAnswer").hide();
 
+        $("#notifyText").html(resultText());
         if (currentScore == 3) {
             yesAnswerCount++
             $("#yourAnswer").html(maybeYesButtonHTML());
@@ -445,7 +446,7 @@
     }
 
     function addPlaylist(trackId, trackName, artistName) {
-        $("#track" + (playlistCount + 1)).html(`<span>${playlistCount + 1}. </span><a class="text-success" href="/song/${trackId}">${trackName}</a><footer class="blockquote-footer"> ${artistName}</footer>`)
+        $("#track" + (playlistCount + 1)).html(`<span>${playlistCount + 1}. </span><a class="text-success">${trackName}</a><footer class="blockquote-footer"> ${artistName}</footer>`)
         playlistCount++
     }
 
@@ -462,6 +463,15 @@
     function maybeYesButtonHTML() {
         return `<button class="btn btn-outline-info"><i class="far fa-smile-wink fa-lg"></i> Maybe Yes </button>`
     }
+
+    function confirmationText() {
+        return `Do you want to change your rating for this song? <br><span class="text-muted">Note: only songs that are <u>unanimously</u> chosen for are added to the playlist.<span>`
+    }
+
+    function resultText() {
+        return `Your final choice is`
+    }
+
 </script>
 
 <style>
