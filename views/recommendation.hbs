@@ -636,7 +636,7 @@
             if (isCompletedStep1()) {
                 showLoading()
                 let min = 0,
-                    max = 0;
+                    max = 5;
                 // generate Random number between 5-10
                 let rand = Math.floor(Math.random() * (max - min + 1) + min);
                 recommendationArray[arrayIndex].waiting_a = rand
@@ -651,7 +651,7 @@
             if (isCompletedStep2()) {
                 showLoading()
                 let min = 0,
-                    max = 0;
+                    max = 5;
                 // generate Random number between 5-10
                 let rand = Math.floor(Math.random() * (max - min + 1) + min);
                 recommendationArray[arrayIndex].waiting_b = rand
