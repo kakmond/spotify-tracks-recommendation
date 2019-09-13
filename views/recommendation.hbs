@@ -1,12 +1,34 @@
 <div class="container">
+    <!-- Modal -->
+    <div class="modal fade" id="alertModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Ooops!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">
+                        Please answer all questions.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="pt-2 pb-3 d-flex bd-highlight">
         <div id="track" class="p-2 flex-grow-1 bd-highlight">
             <div>
                 <div class="card">
                     <div class="card-body">
                         <div class="text-center">
-                            <img id="img" src="{{track.album.images.[0].url}}"
-                                style="border-radius: 50%; height: 250px">
+                            <img id="img" style="border-radius: 50%; height: 250px">
                             <footer class="pt-2">
                                 <div id="player">
                                     <audio controls class="embed-responsive-item">
@@ -30,35 +52,81 @@
                         </ul>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
-                                <a class="text-reset lead">Would you like this song to be added to the play list?</a>
-                                <footer class="pt-2">
-                                    <div class="row">
-
-                                        <div class="pl-3">
-                                            <button onclick="vote(4)" class="btn btn-outline-success">
-                                                <i class="far fa-laugh-beam fa-lg"></i> Yes
-                                            </button>
+                                <div>
+                                    <a class="text-reset lead">Do you know this song?</a>
+                                    <footer class="pt-2">
+                                        <div class="row">
+                                            <div class="pl-3">
+                                                <button id="songYes" type="button" class="btn btn-outline-success"
+                                                    onclick="knowSong(1)">
+                                                    <i class="far fa-laugh-beam fa-lg"></i> Yes
+                                                </button>
+                                            </div>
+                                            <div class="pl-3">
+                                                <button id="songNo" type="button" class="btn btn-outline-danger"
+                                                    onclick="knowSong(0)">
+                                                    <i class="far fa-frown fa-lg"></i> No
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="pl-3">
-                                            <button onclick="vote(3)" class="btn btn-outline-info">
-                                                <i class="far fa-smile-wink fa-lg"></i> Maybe Yes
-                                            </button>
+                                    </footer>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div>
+                                    <a class="text-reset lead">Do you know this artist?</a>
+                                    <footer class="pt-2">
+                                        <div class="row">
+                                            <div class="pl-3">
+                                                <button id="artistYes" type="button" class="btn btn-outline-success"
+                                                    onclick="knowArtist(1)">
+                                                    <i class="far fa-laugh-beam fa-lg"></i> Yes
+                                                </button>
+                                            </div>
+                                            <div class="pl-3">
+                                                <button id="artistNo" type="button" class="btn btn-outline-danger"
+                                                    onclick="knowArtist(0)">
+                                                    <i class="far fa-frown fa-lg"></i> No
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="pl-3">
-                                            <button onclick="vote(2)" class="btn btn-outline-secondary">
-                                                <i class="far fa-meh fa-lg"></i> Maybe No
-                                            </button>
+                                    </footer>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div>
+                                    <a class="text-reset lead">Would you like this song to be added to the play
+                                        list?</a>
+                                    <footer class="pt-2">
+                                        <div class="row">
+                                            <div class="pl-3">
+                                                <button id="answer4" onclick="vote(4)" class="btn btn-outline-success">
+                                                    <i class="far fa-laugh-beam fa-lg"></i> Yes
+                                                </button>
+                                            </div>
+                                            <div class="pl-3">
+                                                <button id="answer3" onclick="vote(3)" class="btn btn-outline-info">
+                                                    <i class="far fa-smile-wink fa-lg"></i> Maybe Yes
+                                                </button>
+                                            </div>
+                                            <div class="pl-3">
+                                                <button id="answer2" onclick="vote(2)"
+                                                    class="btn btn-outline-secondary">
+                                                    <i class="far fa-meh fa-lg"></i> Maybe No
+                                                </button>
+                                            </div>
+                                            <div class="pl-3">
+                                                <button id="answer1" onclick="vote(1)" class="btn btn-outline-danger">
+                                                    <i class="far fa-frown fa-lg"></i> No
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="pl-3">
-
-                                            <button onclick="vote(1)" class="btn btn-outline-danger">
-                                                <i class="far fa-frown fa-lg"></i> No
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                </footer>
-
+                                    </footer>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -70,10 +138,21 @@
         <div id="user" class="p-2 flex-grow-1 bd-highlight" style="display: none">
 
             <div class="px-5">
-                <div class="text-center">
-                    <h1 style="font-size: 38px" class="lead text-dark pb-3">Sample <span class="text-success">
-                            Users</span>
-                    </h1>
+                <div class="text-center pb-3" id="firstHeaderText">
+                    <span style="font-size: 38px" class="lead text-dark">
+                        First <span class="text-success">
+                            Text</span>
+                    </span>
+                    <footer class="lead text-muted">First note
+                    </footer>
+                </div>
+                <div class="text-center pb-3" id="secondHeaderText">
+                    <span style="font-size: 38px" class="lead text-dark">
+                        Second <span class="text-success">
+                            Text</span>
+                    </span>
+                    <footer class="lead text-muted">Second note
+                    </footer>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -102,32 +181,52 @@
                     </li>
 
                     <li class="list-group-item">
-                        <a id="notifyText" class="lead"></a>
-                        <footer id="repeatAnswer" class="pt-2">
-                            <div class="row">
-                                <div class="pl-3">
-                                    <button onclick="finalVote(4)" class="btn btn-outline-success">
-                                        <i class="far fa-laugh-beam fa-lg"></i> Yes
-                                    </button>
+                        <div id="repeatAnswer">
+                            <a class="lead">
+                                Do you want to change your rating for this song? <br><span class="text-muted">Note: only
+                                    songs that are <u>unanimously</u> chosen for are added to the playlist.<span>
+                            </a>
+                            <footer class="pt-2">
+                                <div class="row">
+                                    <div class="pl-3">
+                                        <button id="repeatAnswer4" onclick="finalVote(4)"
+                                            class="btn btn-outline-success">
+                                            <i class="far fa-laugh-beam fa-lg"></i> Yes
+                                        </button>
+                                    </div>
+                                    <div class="pl-3">
+                                        <button id="repeatAnswer3" onclick="finalVote(3)" class="btn btn-outline-info">
+                                            <i class="far fa-smile-wink fa-lg"></i> Maybe Yes
+                                        </button>
+                                    </div>
+                                    <div class="pl-3">
+                                        <button id="repeatAnswer2" onclick="finalVote(2)"
+                                            class="btn btn-outline-secondary">
+                                            <i class="far fa-meh fa-lg"></i> Maybe No
+                                        </button>
+                                    </div>
+                                    <div class="pl-3">
+                                        <button id="repeatAnswer1" onclick="finalVote(1)"
+                                            class="btn btn-outline-danger">
+                                            <i class="far fa-frown fa-lg"></i> No
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="pl-3">
-                                    <button onclick="finalVote(3)" class="btn btn-outline-info">
-                                        <i class="far fa-smile-wink fa-lg"></i> Maybe Yes
-                                    </button>
-                                </div>
-                                <div class="pl-3">
-                                    <button onclick="finalVote(2)" class="btn btn-outline-secondary">
-                                        <i class="far fa-meh fa-lg"></i> Maybe No
-                                    </button>
-                                </div>
-                                <div class="pl-3">
-                                    <button onclick="finalVote(1)" class="btn btn-outline-danger">
-                                        <i class="far fa-frown fa-lg"></i> No
-                                    </button>
-                                </div>
+                            </footer>
+                        </div>
+
+
+                        <div id="yourAnswer" style="display:none">
+                            <a class="lead">
+                                Your final choice is
+                            </a>
+                            <footer id="yourAnswerBtn" class="pt-2">
+
+                            </footer>
+
+                            <div id="statusAlert" class="pt-3">
+
                             </div>
-                        </footer>
-                        <div id="yourAnswer" style="display:none" class="pt-2">
                         </div>
                     </li>
                 </ul>
@@ -154,8 +253,7 @@
                 </ul>
             </div>
             <div class="pt-3">
-                <button id="nextStep" onclick="nextStep()" style="display:none"
-                    class="btn-block btn-lg btn-outline-primary">Next
+                <button id="nextStep" onclick="nextStep()" class="btn-block btn-lg btn-outline-primary">Next
                     Step</button>
             </div>
         </div>
@@ -173,7 +271,6 @@
 
 <script>
 
-
     function showTrackById(trackId) {
         recommendationArray[arrayIndex].track_id = trackId
         recommendationArray[arrayIndex].user_id = user_id
@@ -184,15 +281,26 @@
             },
             success: function (response) {
                 $("#img").attr("src", response.album.images[0].url);
-                // $("#player").html("src", response.preview_url)
                 $("#player").html('')
                 $("#player").html("<audio controls src=" + response.preview_url + " class='embed-responsive-item'>  <source> </audio>")
                 $("#trackName").text(response.name)
                 $("#artistName").text(response.artists[0].name)
                 $("#track").show();
                 $("#user").hide();
-                $("#nextStep").hide();
                 $("#yourAnswer").hide();
+                // remove all active buttons
+                $("#artistYes").removeClass("active");
+                $("#artistNo").removeClass("active");
+                $("#songYes").removeClass("active");
+                $("#songNo").removeClass("active");
+                $("#answer1").removeClass("active")
+                $("#answer2").removeClass("active")
+                $("#answer3").removeClass("active")
+                $("#answer4").removeClass("active")
+                $("#repeatAnswer1").removeClass("active")
+                $("#repeatAnswer2").removeClass("active")
+                $("#repeatAnswer3").removeClass("active")
+                $("#repeatAnswer4").removeClass("active")
             }
         })
     }
@@ -223,6 +331,7 @@
     let recommendationArray = [] // data for sending to server by using jQuery POST
     let arrayIndex = 0 // index for pushing to recommendationArray
     recommendationArray[arrayIndex] = {}
+    let currentStep = 0
     let playlistCount = 0
     let startRandomFrom = ""
     let yesAnswerCount = 0
@@ -245,26 +354,141 @@
     // display initial track
     showTrackById(randomTrackId)
 
+    function knowArtist(answer) {
+        recommendationArray[arrayIndex].know_artist = answer
+        if (answer == 1) {
+            $("#artistYes").addClass("active", true);
+            $("#artistNo").removeClass("active");
+            console.log("CALL")
+        } else {
+            $("#artistNo").addClass("active", true);
+            $("#artistYes").removeClass("active");
+        }
+    }
+
+    function knowSong(answer) {
+        recommendationArray[arrayIndex].know_song = answer
+        if (answer == 1) {
+            $("#songYes").addClass("active", true);
+            $("#songNo").removeClass("active");
+        } else {
+            $("#songNo").addClass("active", true);
+            $("#songYes").removeClass("active");
+        }
+    }
+
+    function isCompletedStep1() {
+        let answerCount = 0
+        if ($("#songYes").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#songNo").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#artistYes").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#artistNo").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#answer1").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#answer2").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#answer3").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#answer4").hasClass("active")) {
+            answerCount++
+        }
+        if (answerCount == 3) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    function isCompletedStep2() {
+        let answerCount = 0
+        if ($("#repeatAnswer1").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#repeatAnswer2").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#repeatAnswer3").hasClass("active")) {
+            answerCount++
+        }
+        if ($("#repeatAnswer4").hasClass("active")) {
+            answerCount++
+        }
+        if (answerCount == 1) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
     function vote(score) {
         currentScore = score
         recommendationArray[arrayIndex].answer_a = currentScore
-        showLoading()
-        let min = 5,
-            max = 10;
-        let rand = Math.floor(Math.random() * (max - min + 1) + min); // generate Random number between 5 - 10
-        recommendationArray[arrayIndex].waiting_a = rand
-        setTimeout(showAnonymousUser, rand * 1000);
+        if (score == 4) {
+            $("#answer4").addClass("active", true);
+            $("#answer3").removeClass("active");
+            $("#answer2").removeClass("active");
+            $("#answer1").removeClass("active");
+        }
+        else if (score == 3) {
+            $("#answer3").addClass("active", true);
+            $("#answer4").removeClass("active");
+            $("#answer2").removeClass("active");
+            $("#answer1").removeClass("active");
+        }
+        else if (score == 2) {
+            $("#answer2").addClass("active", true);
+            $("#answer4").removeClass("active");
+            $("#answer3").removeClass("active");
+            $("#answer1").removeClass("active");
+        }
+        else {
+            $("#answer1").addClass("active", true);
+            $("#answer4").removeClass("active");
+            $("#answer3").removeClass("active");
+            $("#answer2").removeClass("active");
+        }
     }
 
     function finalVote(score) {
         currentScore = score
         recommendationArray[arrayIndex].answer_b = currentScore
-        showLoading()
-        let min = 5,
-            max = 10;
-        let rand = Math.floor(Math.random() * (max - min + 1) + min); // generate Random number between 5 - 10
-        recommendationArray[arrayIndex].waiting_b = rand
-        setTimeout(showResult, rand * 1000);
+        if (score == 4) {
+            $("#repeatAnswer4").addClass("active", true);
+            $("#repeatAnswer3").removeClass("active");
+            $("#repeatAnswer2").removeClass("active");
+            $("#repeatAnswer1").removeClass("active");
+        }
+        else if (score == 3) {
+            $("#repeatAnswer3").addClass("active", true);
+            $("#repeatAnswer4").removeClass("active");
+            $("#repeatAnswer2").removeClass("active");
+            $("#repeatAnswer1").removeClass("active");
+        }
+        else if (score == 2) {
+            $("#repeatAnswer2").addClass("active", true);
+            $("#repeatAnswer4").removeClass("active");
+            $("#repeatAnswer3").removeClass("active");
+            $("#repeatAnswer1").removeClass("active");
+        }
+        else {
+            $("#repeatAnswer1").addClass("active", true);
+            $("#repeatAnswer4").removeClass("active");
+            $("#repeatAnswer3").removeClass("active");
+            $("#repeatAnswer2").removeClass("active");
+        }
     }
 
     function showLoading() {
@@ -272,6 +496,7 @@
         $("#user").hide();
         $("#playlist").hide();
         $("#loading").show();
+        //$("#nextStep").hide();
     }
 
     function showAnonymousUser() {
@@ -324,10 +549,11 @@
                 }
             }
         }
-        $("#notifyText").html(confirmationText());
         $("#loading").hide();
         $("#playlist").show();
         $("#user").show();
+        $("#firstHeaderText").show();
+        $("#secondHeaderText").hide();
         $("#repeatAnswer").show();
     }
 
@@ -364,84 +590,119 @@
             // set name of dummy user
             $("#userName" + (index + 1)).html((index + 1) + '. ' + randomName[index])
         }
+        let trackId = $("#trackId").text()
+        let artistName = $("#artistName").text()
+        let trackName = $("#trackName").text()
         if (shouldAdd) {
-            let trackId = $("#trackId").text()
-            let artistName = $("#artistName").text()
-            let trackName = $("#trackName").text()
-            console.log(trackId + " " + artistName + " " + trackName)
             addPlaylist(trackId, trackName, artistName)
-
+            $("#statusAlert").html(addedPlaylistAlert(trackName));
+        }
+        else {
+            $("#statusAlert").html(notAddedPlaylistAlert(trackName));
         }
         $("#loading").hide();
         $("#playlist").show();
         $("#user").show();
         $("#repeatAnswer").hide();
 
-        $("#notifyText").html(resultText());
         if (currentScore == 3) {
             yesAnswerCount++
-            $("#yourAnswer").html(maybeYesButtonHTML());
+            $("#yourAnswerBtn").html(maybeYesButtonHTML());
         }
         else if (currentScore == 4) {
             yesAnswerCount++
-            $("#yourAnswer").html(yesButtonHTML());
+            $("#yourAnswerBtn").html(yesButtonHTML());
         }
         else if (currentScore == 2) {
             noAnswerCount++
-            $("#yourAnswer").html(maybeNoButtonHTML());
+            $("#yourAnswerBtn").html(maybeNoButtonHTML());
         }
         else {
             noAnswerCount++
-            $("#yourAnswer").html(noButtonHTML());
+            $("#yourAnswerBtn").html(noButtonHTML());
         }
         $("#yourAnswer").show();
+        $("#firstHeaderText").hide();
+        $("#secondHeaderText").show();
 
         if (playlistCount == 10) {
             $("#nextStep").html('Finish');
         }
-        $("#nextStep").show();
         arrayIndex++
     }
 
     function nextStep() {
-        if (playlistCount == 10) {
-            // send data to server
-            $.ajax({
-                type: 'POST',
-                data: JSON.stringify(recommendationArray),
-                contentType: 'application/json',
-                url: '/recommendation'
-            });
-        }
-        else if (startRandomFrom == '25') {
-            recommendationArray[arrayIndex] = {}
-            if (noAnswerCount >= 5) {
-                console.log("CHANGE TO 75")
-                recommendationArray[arrayIndex].list = 75
-                noAnswerCount = 0
-                yesAnswerCount = 0
-                startRandomFrom = '75'
-                showTrackById(randomTracks75.pop())
+        if (currentStep == 0) {
+            if (isCompletedStep1()) {
+                showLoading()
+                let min = 0,
+                    max = 0;
+                // generate Random number between 5-10
+                let rand = Math.floor(Math.random() * (max - min + 1) + min);
+                recommendationArray[arrayIndex].waiting_a = rand
+                setTimeout(showAnonymousUser, rand * 1000);
+                currentStep++
             }
             else {
-                recommendationArray[arrayIndex].list = 25
-                showTrackById(randomTracks25.pop())
+                $('#alertModel').modal('show')
             }
         }
-        else {
-            recommendationArray[arrayIndex] = {}
-            if (yesAnswerCount >= 5) {
-                console.log("CHANGE TO 25")
-                recommendationArray[arrayIndex].list = 25
-                noAnswerCount = 0
-                yesAnswerCount = 0
-                startRandomFrom = '25'
-                showTrackById(randomTracks25.pop())
+        else if (currentStep == 1) {
+            if (isCompletedStep2()) {
+                showLoading()
+                let min = 0,
+                    max = 0;
+                // generate Random number between 5-10
+                let rand = Math.floor(Math.random() * (max - min + 1) + min);
+                recommendationArray[arrayIndex].waiting_b = rand
+                setTimeout(showResult, rand * 1000);
+                currentStep++
             }
             else {
-                recommendationArray[arrayIndex].list = 75
-                showTrackById(randomTracks75.pop())
+                $('#alertModel').modal('show')
             }
+        }
+        else if (currentStep == 2) {
+            if (playlistCount == 10) {
+                // send data to server
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(recommendationArray),
+                    contentType: 'application/json',
+                    url: '/recommendation'
+                });
+            }
+            else if (startRandomFrom == '25') {
+                recommendationArray[arrayIndex] = {}
+                if (noAnswerCount >= 5) {
+                    console.log("CHANGE TO 75")
+                    recommendationArray[arrayIndex].list = 75
+                    noAnswerCount = 0
+                    yesAnswerCount = 0
+                    startRandomFrom = '75'
+                    showTrackById(randomTracks75.pop())
+                }
+                else {
+                    recommendationArray[arrayIndex].list = 25
+                    showTrackById(randomTracks25.pop())
+                }
+            }
+            else {
+                recommendationArray[arrayIndex] = {}
+                if (yesAnswerCount >= 5) {
+                    console.log("CHANGE TO 25")
+                    recommendationArray[arrayIndex].list = 25
+                    noAnswerCount = 0
+                    yesAnswerCount = 0
+                    startRandomFrom = '25'
+                    showTrackById(randomTracks25.pop())
+                }
+                else {
+                    recommendationArray[arrayIndex].list = 75
+                    showTrackById(randomTracks75.pop())
+                }
+            }
+            currentStep = 0
         }
     }
 
@@ -463,15 +724,17 @@
     function maybeYesButtonHTML() {
         return `<button class="btn btn-outline-info"><i class="far fa-smile-wink fa-lg"></i> Maybe Yes </button>`
     }
-
-    function confirmationText() {
-        return `Do you want to change your rating for this song? <br><span class="text-muted">Note: only songs that are <u>unanimously</u> chosen for are added to the playlist.<span>`
+    function addedPlaylistAlert(trackName) {
+        return `<div class="alert alert-success lead" role="alert">
+                                    <a class="alert-link lead">${trackName}</a> is added to the playlist!
+                                </div>`
     }
 
-    function resultText() {
-        return `Your final choice is`
+    function notAddedPlaylistAlert(trackName) {
+        return `<div class="alert alert-danger lead" role="alert">
+                                    <a class="alert-link">${trackName}</a> is not added to the playlist.
+                                </div>`
     }
-
 </script>
 
 <style>
