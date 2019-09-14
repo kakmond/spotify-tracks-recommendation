@@ -1,4 +1,9 @@
 <script>
+    window.addEventListener("beforeunload", function (event) {
+        setCookie("haveBeen", songId)
+        event.returnValue = "\o/";
+        return ""
+    });
     // before rendering, check if is this component reloaded
     let url = window.location.href.split('/')
     let songId = url[url.length - 1]
@@ -34,6 +39,14 @@
 
     <div class="pt-2 pb-3 d-flex bd-highlight">
         <div id="track" class="p-2 flex-grow-1 bd-highlight">
+            <div class="text-center pb-3" id="firstHeaderText">
+                <span style="font-size: 38px" class="text-success">
+                    First <span style="font-size: 38px" class="lead text-dark">
+                        Header</span>
+                </span>
+                <footer align="left" class="lead text-muted">First note:</b>
+                </footer>
+            </div>
             <div>
                 <div class="card">
                     <div class="card-body">
@@ -284,15 +297,6 @@
 </div>
 
 <script>
-
-
-    window.addEventListener("beforeunload", function (event) {
-        setCookie("haveBeen", songId)
-        event.returnValue = "\o/";
-        return ""
-    });
-
-
     function showTrackById(trackId) {
         recommendationArray[arrayIndex].track_id = trackId
         recommendationArray[arrayIndex].user_id = user_id
