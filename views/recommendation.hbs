@@ -1,3 +1,13 @@
+<script>
+    // before rendering, check if is this component reloaded
+    let url = window.location.href.split('/')
+    let songId = url[url.length - 1]
+    console.log((getCookie("haveBeen")))
+    if (getCookie("haveBeen") === songId) {
+        window.location.href = '/tracks'
+    }
+</script>
+
 <div class="container">
     <!-- Modal -->
     <div class="modal fade" id="alertModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -143,7 +153,11 @@
                         Unanimous <span style="font-size: 38px" class="lead text-dark">
                             Group Responses</span>
                     </span>
-                    <footer align="left" class="lead text-muted">The initial responses of your group members are shown here. In this stage the names of <b>all</b> group members are anonymized. You are allowed to change your opinion on this song for the playlist. The names and responses of all group members will be revealed when the final decision has been made in the next step. <b>Remember that an unanimous decision need to be reached before a song will be added to the playlist.</b>
+                    <footer align="left" class="lead text-muted">The initial responses of your group members are shown
+                        here. In this stage the names of <b>all</b> group members are anonymized. You are allowed to
+                        change your opinion on this song for the playlist. The names and responses of all group members
+                        will be revealed when the final decision has been made in the next step. <b>Remember that an
+                            unanimous decision need to be reached before a song will be added to the playlist.</b>
                     </footer>
                 </div>
                 <div class="text-center pb-3" id="secondHeaderText">
@@ -151,7 +165,8 @@
                         Group <span style="font-size: 38px" class="lead text-dark">
                             Responses</span>
                     </span>
-                    <footer align="left" class="lead text-muted">The final decision has been made! The names and responses of all the group members are shown below.
+                    <footer align="left" class="lead text-muted">The final decision has been made! The names and
+                        responses of all the group members are shown below.
                     </footer>
                 </div>
                 <ul class="list-group list-group-flush">
@@ -269,6 +284,13 @@
 </div>
 
 <script>
+
+
+    window.addEventListener("beforeunload", function (event) {
+        setCookie("haveBeen", songId)
+        event.returnValue = "\o/";
+    });
+
 
     function showTrackById(trackId) {
         recommendationArray[arrayIndex].track_id = trackId
@@ -711,17 +733,17 @@
     }
 
     function noButtonHTML() {
-        return `<button class="btn btn-outline-danger"><i class="far fa-frown fa-lg"></i> No </button>`
+        return `<button class="active btn btn-outline-danger"><i class="far fa-frown fa-lg"></i> No </button>`
     }
 
     function maybeNoButtonHTML() {
-        return `<button class="btn btn-outline-secondary"><i class="far fa-meh fa-lg"></i> Maybe No </button>`
+        return `<button class="active btn btn-outline-secondary"><i class="far fa-meh fa-lg"></i> Maybe No </button>`
     }
     function yesButtonHTML() {
-        return `<button class="btn btn-outline-success"><i class="far fa-laugh-beam fa-lg"></i> Yes </button>`
+        return `<button class="active btn btn-outline-success"><i class="far fa-laugh-beam fa-lg"></i> Yes </button>`
     }
     function maybeYesButtonHTML() {
-        return `<button class="btn btn-outline-info"><i class="far fa-smile-wink fa-lg"></i> Maybe Yes </button>`
+        return `<button class="active btn btn-outline-info"><i class="far fa-smile-wink fa-lg"></i> Maybe Yes </button>`
     }
     function addedPlaylistAlert(trackName, artistName) {
         return `<div class="alert alert-success lead" role="alert">

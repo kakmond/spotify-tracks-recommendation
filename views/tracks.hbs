@@ -4,8 +4,17 @@
             Top-10 <span class="text-dark">
                 Tracks</span>
         </span>
-        <footer align="left" class="lead text-muted">Below are 10 songs that you have been listening to most. Based on the song that you will pick, we will put you in a group with similar minded people. The task for you and your group members is to create a playlist. With your group members you will need to come to an agreement on which song to add to the playlist.
+        <footer align="left" class="lead text-muted">Below are 10 songs that you have been listening to most. Based on
+            the song that you will pick, we will put you in a group with similar minded people. The task for you and
+            your group members is to create a playlist. With your group members you will need to come to an agreement on
+            which song to add to the playlist.
         </footer>
+    </div>
+    <div id="backAlert" class="alert alert-warning alert-dismissible fade show" style="display: none" role="alert">
+        <strong>Playlist reset!</strong> you have been disconnected from the recommendation server
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     <ul class="list-group list-group-flush">
         {{#each tracks}}
@@ -34,7 +43,8 @@
                     </div>
 
                     <div>
-                        <a href="/recommendation/{{this.id}}" role="button" class="btn btn-outline-info">I choose this song</a>
+                        <a href="/recommendation/{{this.id}}" role="button" class="btn btn-outline-info">I choose this
+                            song</a>
                     </div>
                 </div>
             </div>
@@ -42,6 +52,14 @@
         {{/each}}
     </ul>
 </div>
+
+<script>
+    let haveBeenSong = getCookie("haveBeen")
+    setCookie("haveBeen", null)
+    if (haveBeenSong) {
+        $("#backAlert").show();
+    }
+</script>
 
 <style>
     .tracks {

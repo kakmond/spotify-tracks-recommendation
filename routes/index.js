@@ -6,8 +6,8 @@ var querystring = require('querystring');
 
 var client_id = 'effb4e77d8764a29a23dc735f6f11dfa'; // Your client id
 var client_secret = 'ef52e8965b47466e812d2d3ce761e582'; // Your secret
-var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
-// var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+// var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 // var redirect_uri = 'https://spotify-group2.herokuapp.com/callback'; // Your redirect uri
 
 var mysql = require('mysql');
