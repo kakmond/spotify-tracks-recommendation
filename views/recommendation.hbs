@@ -529,8 +529,6 @@
         // if user's answer is NO or MAYBE NO
         if (currentScore == 1 || currentScore == 2)
             for (let index = 0; index < 4; index++) {
-                // hide name
-                $("#userName" + (index + 1)).html('User #' + (index + 1))
                 // set dummy answer
                 let random = Math.random();
                 if (random <= 0.1) {
@@ -553,8 +551,6 @@
         // if user's answer is YES or MAYBE YES
         else {
             for (let index = 0; index < 4; index++) {
-                // hide name
-                $("#userName" + (index + 1)).html('User #' + (index + 1))
                 // set dummy answer
                 let random = Math.random();
                 if (random <= 0.1) {
