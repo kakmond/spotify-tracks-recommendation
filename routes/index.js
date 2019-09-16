@@ -122,15 +122,23 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
       randomTracks25 = []
       randomTracks75 = []
       // store data in popularity25 table
-      for (let index = 0; index < popularity25body.tracks.length; index++) {
-        db.query("REPLACE INTO popularity25 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity])
-        randomTracks25.push(popularity25body.tracks[index].id)
+      if (popularity25body.tracks) {
+        for (let index = 0; index < popularity25body.tracks.length; index++) {
+          if (popularity25body.tracks[index]) {
+            db.query("REPLACE INTO popularity25 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity])
+            randomTracks25.push(popularity25body.tracks[index].id)
+          }
+        }
       }
       request.get(recommendationOptions(access_token, trackId, 75), function (error, response, popularity75body) {
         // store data in popularity75 table
-        for (let index = 0; index < popularity75body.tracks.length; index++) {
-          db.query("REPLACE INTO popularity75 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
-          randomTracks75.push(popularity75body.tracks[index].id)
+        if (popularity75body.tracks) {
+          for (let index = 0; index < popularity75body.tracks.length; index++) {
+            if (popularity75body.tracks[index]) {
+              db.query("REPLACE INTO popularity75 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
+              randomTracks75.push(popularity75body.tracks[index].id)
+            }
+          }
         }
         res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75) });
       });
