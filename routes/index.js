@@ -6,8 +6,8 @@ var querystring = require('querystring');
 
 var client_id = 'effb4e77d8764a29a23dc735f6f11dfa'; // Your client id
 var client_secret = 'ef52e8965b47466e812d2d3ce761e582'; // Your secret
-var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
-// var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+// var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 // var redirect_uri = 'https://spotify-group2.herokuapp.com/callback'; // Your redirect uri
 
 var mysql = require('mysql');
@@ -130,7 +130,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
         // store data in popularity75 table
         for (let index = 0; index < popularity75body.tracks.length; index++) {
           db.query("REPLACE INTO popularity75 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
-          randomTracks75.push(popularity25body.tracks[index].id)
+          randomTracks75.push(popularity75body.tracks[index].id)
         }
         res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75) });
       });
@@ -227,28 +227,25 @@ router.get('/login', function (req, res) {
 })
 
 router.post('/recommendation/', checkToken, function (req, res) {
-  let recommendationArray = req.body
-  for (let index = 0; index < recommendationArray.length; index++) {
-    let recommendationObject = recommendationArray[index]
-    let user_id = recommendationObject.user_id
-    let track_id = recommendationObject.track_id
-    let list = recommendationObject.list
-    let know_song = recommendationObject.know_song
-    let know_artist = recommendationObject.know_artist
-    let answer_a = recommendationObject.answer_a
-    let waiting_a = recommendationObject.waiting_a
-    let bot0_a = recommendationObject.bot0_a
-    let bot1_a = recommendationObject.bot1_a
-    let bot2_a = recommendationObject.bot2_a
-    let bot3_a = recommendationObject.bot3_a
-    let answer_b = recommendationObject.answer_b
-    let waiting_b = recommendationObject.waiting_b
-    let bot0_b = recommendationObject.bot0_b
-    let bot1_b = recommendationObject.bot1_b
-    let bot2_b = recommendationObject.bot2_b
-    let bot3_b = recommendationObject.bot3_b
-    db.query("INSERT INTO recommendation (user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b])
-  }
+  let recommendationObject = req.body
+  let user_id = recommendationObject.user_id
+  let track_id = recommendationObject.track_id
+  let list = recommendationObject.list
+  let know_song = recommendationObject.know_song
+  let know_artist = recommendationObject.know_artist
+  let answer_a = recommendationObject.answer_a
+  let waiting_a = recommendationObject.waiting_a
+  let bot0_a = recommendationObject.bot0_a
+  let bot1_a = recommendationObject.bot1_a
+  let bot2_a = recommendationObject.bot2_a
+  let bot3_a = recommendationObject.bot3_a
+  let answer_b = recommendationObject.answer_b
+  let waiting_b = recommendationObject.waiting_b
+  let bot0_b = recommendationObject.bot0_b
+  let bot1_b = recommendationObject.bot1_b
+  let bot2_b = recommendationObject.bot2_b
+  let bot3_b = recommendationObject.bot3_b
+  db.query("INSERT INTO recommendation (user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b])
 }
 );
 
