@@ -44,7 +44,11 @@
                     Candidate <span style="font-size: 38px" class="lead text-dark">
                         Song</span>
                 </span>
-                <footer align="left" class="lead text-muted">Below you will find a candidate song for the playlist. This song is chosen based on your reference song that you chose before and the fitness with your fellow group members. Indicate for the song below to what extent you would like to have this song added to the playlist. Responses of you and your group members will be initially shown <b><u>anonymously</u></b> in the next step.
+                <footer align="left" class="lead text-muted">Below you will find a candidate song for the playlist. This
+                    song is chosen based on your reference song that you chose before and the fitness with your fellow
+                    group members. Indicate for the song below to what extent you would like to have this song added to
+                    the playlist. Responses of you and your group members will be initially shown
+                    <b><u>anonymously</u></b> in the next step.
                 </footer>
             </div>
             <div>
@@ -95,7 +99,7 @@
                                     </footer>
                                 </div>
                             </li>
-                        </ul>						
+                        </ul>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
                                 <div>
@@ -166,11 +170,13 @@
                             Group Responses</span>
                     </span>
                     <footer align="left" class="lead text-muted">The initial responses of your group members are shown
-                        here. In this stage the names of <b><u>all</u></b> group members are anonymized. You are allowed to
+                        here. In this stage the names of <b><u>all</u></b> group members are anonymized. You are allowed
+                        to
                         change your opinion on this song for the playlist. The names and responses of all group members
-                        will be revealed when the final decision has been made in the next step. 
-						<br>
-						<b>Remember that an unanimous positive (i.e., "yes" or "maybe yes") decision need to be reached before a song will be added to the playlist.</b>
+                        will be revealed when the final decision has been made in the next step.
+                        <br>
+                        <b>Remember that an unanimous positive (i.e., "yes" or "maybe yes") decision need to be reached
+                            before a song will be added to the playlist.</b>
                     </footer>
                 </div>
                 <div class="text-center pb-3" id="secondHeaderText">
@@ -212,7 +218,7 @@
                         <div id="repeatAnswer">
                             <a class="lead">
                                 You are allowed to revise your rating. <br>
-								Would you like this song to be added to the playlist?
+                                Would you like this song to be added to the playlist?
                             </a>
                             <footer class="pt-2">
                                 <div class="row">
@@ -651,7 +657,6 @@
         if (playlistCount == 10) {
             $("#nextStep").html('Finish');
         }
-        arrayIndex++
     }
 
     function nextStep() {
@@ -686,47 +691,53 @@
             }
         }
         else if (currentStep == 2) {
-            if (playlistCount == 10) {
-                // send data to server
-                $.ajax({
-                    type: 'POST',
-                    data: JSON.stringify(recommendationArray),
-                    contentType: 'application/json',
-                    url: '/recommendation'
-                });
-            }
-            else if (startRandomFrom == '25') {
-                recommendationArray[arrayIndex] = {}
-                if (noAnswerCount >= 5) {
-                    console.log("CHANGE TO 75")
-                    recommendationArray[arrayIndex].list = 75
-                    noAnswerCount = 0
-                    yesAnswerCount = 0
-                    startRandomFrom = '75'
-                    showTrackById(randomTracks75.pop())
-                }
-                else {
-                    recommendationArray[arrayIndex].list = 25
-                    showTrackById(randomTracks25.pop())
-                }
+            if (playlistCount >= 10) {
+                // do the survey
             }
             else {
-                recommendationArray[arrayIndex] = {}
-                if (yesAnswerCount >= 5) {
-                    console.log("CHANGE TO 25")
-                    recommendationArray[arrayIndex].list = 25
-                    noAnswerCount = 0
-                    yesAnswerCount = 0
-                    startRandomFrom = '25'
-                    showTrackById(randomTracks25.pop())
+                postRecommendationData(arrayIndex) // send current recommendation data to server
+                arrayIndex++ // move cursor to next song index
+                recommendationArray[arrayIndex] = {} // initialize song recommendation object
+                if (startRandomFrom == '25') {
+                    if (noAnswerCount >= 5) {
+                        console.log("CHANGE TO 75")
+                        recommendationArray[arrayIndex].list = 75
+                        noAnswerCount = 0
+                        yesAnswerCount = 0
+                        startRandomFrom = '75'
+                        showTrackById(randomTracks75.pop())
+                    }
+                    else {
+                        recommendationArray[arrayIndex].list = 25
+                        showTrackById(randomTracks25.pop())
+                    }
                 }
                 else {
-                    recommendationArray[arrayIndex].list = 75
-                    showTrackById(randomTracks75.pop())
+                    if (yesAnswerCount >= 5) {
+                        console.log("CHANGE TO 25")
+                        recommendationArray[arrayIndex].list = 25
+                        noAnswerCount = 0
+                        yesAnswerCount = 0
+                        startRandomFrom = '25'
+                        showTrackById(randomTracks25.pop())
+                    }
+                    else {
+                        recommendationArray[arrayIndex].list = 75
+                        showTrackById(randomTracks75.pop())
+                    }
                 }
+                currentStep = 0
             }
-            currentStep = 0
         }
+    }
+
+    function postRecommendationData(index) {
+        $.ajax({
+            type: 'POST',
+            data: JSON.stringify(recommendationArray[index]),
+            contentType: 'application/json',
+            url: '/recommendation'
+        });
     }
 
     function addPlaylist(trackId, trackName, artistName) {
