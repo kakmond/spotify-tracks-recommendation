@@ -109,7 +109,7 @@ router.get('/song/:id', checkToken, function (req, res) {
 })
 
 router.get('/recommendation/:id', checkToken, function (req, res) {
-  let randomName = ['James', 'Kitsana', 'Wongsathorn', 'Bruce', 'Sathira', 'Wasuthun', 'Micky', 'Mond', 'Steve', 'Tom']
+  let randomName = ['James', 'Sathira', 'Micky', 'Steve']
   let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
   // get track's detail
