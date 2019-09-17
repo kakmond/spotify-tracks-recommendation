@@ -10,12 +10,6 @@
             which song to add to the playlist.
         </footer>
     </div>
-    <div id="backAlert" class="alert alert-warning alert-dismissible fade show" style="display: none" role="alert">
-        <strong>Warning!</strong> Because you refreshed the page or used the back button, you got disconnected from the server. You need to start over again.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
     <ul class="list-group list-group-flush">
         {{#each tracks}}
         <li class="media">
@@ -53,13 +47,13 @@
     </ul>
 </div>
 
-<script>
+{{!-- <script>
     let haveBeenSong = getCookie("haveBeen")
     setCookie("haveBeen", null)
     if (haveBeenSong) {
         $("#backAlert").show();
     }
-</script>
+</script> --}}
 
 <style>
     .tracks {
