@@ -24,5 +24,8 @@ module.exports = {
             default:
                 return options.inverse(this);
         }
+    },
+    jsonToObj: function (obj) {
+        return JSON.parse(obj);
     }
 }
