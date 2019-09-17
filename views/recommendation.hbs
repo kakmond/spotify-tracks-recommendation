@@ -37,8 +37,36 @@
         </div>
     </div>
 
+    <!-- group member -->
+    <div id="step0" style="display: none">
+        <div class="text-center py-3">
+            <span style="font-size: 38px" class="lead text-bold text-success">
+                Group <span class="text-dark">
+                    Members</span>
+            </span>
+            <footer align="left" class="lead text-muted">Note: Lorem Ipsum is simply dummy text of the printing and
+                typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when
+                an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived
+                not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and
+                more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            </footer>
+        </div>
+        <ul class="list-group list-group-flush">
+            {{#each (jsonToObj users)}}
+            <li class="list-group-item lead pl-4">{{this}}</li>
+            {{/each}}
+        </ul>
+        <div class="pt-3">
+            <button id="nextStep0" onclick="nextStep()" class="btn-block btn-lg btn-outline-primary">Next
+                Step
+            </button>
+        </div>
+    </div>
+
+    {{!-- Step1 --}}
     <div class="pt-2 pb-3 d-flex bd-highlight">
-        <div id="track" class="p-2 flex-grow-1 bd-highlight">
+        <div id="step1" style="display: none" class="p-2 flex-grow-1 bd-highlight">
             <div class="text-center pb-3">
                 <span style="font-size: 38px" class="text-success">
                     Candidate <span style="font-size: 38px" class="lead text-dark">
@@ -163,12 +191,11 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <div id="user" class="p-2 flex-grow-1 bd-highlight" style="display: none">
-
+        {{!-- Step2 --}}
+        <div id="step2" class="p-2 flex-grow-1 bd-highlight" style="display: none">
             <div class="px-5">
                 <div class="text-center pb-3" id="firstHeaderText">
                     <span style="font-size: 38px" class="text-success">
@@ -185,36 +212,27 @@
                             before a song will be added to the playlist.</b>
                     </footer>
                 </div>
-                <div class="text-center pb-3" id="secondHeaderText">
-                    <span style="font-size: 38px" class="text-success">
-                        Final <span style="font-size: 38px" class="lead text-dark">
-                            Group Responses</span>
-                    </span>
-                    <footer align="left" class="lead text-muted">The final decision has been made! The names and
-                        responses of all the group members are shown below.
-                    </footer>
-                </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span id="userName1" class="lead">Group Member </span>
+                        <span class="lead">Group Member </span>
                         <div id="userAnswer1">
 
                         </div>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span id="userName2" class="lead">Group Member </span>
+                        <span class="lead">Group Member </span>
                         <div id="userAnswer2">
 
                         </div>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span id="userName3" class="lead">Group Member </span>
+                        <span class="lead">Group Member </span>
                         <div id="userAnswer3">
 
                         </div>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span id="userName4" class="lead">Group Member </span>
+                        <span class="lead">Group Member </span>
                         <div id="userAnswer4">
 
                         </div>
@@ -254,13 +272,59 @@
                                 </div>
                             </footer>
                         </div>
+                    <li class="list-group-item">
+                        <button id="nextStep2" onclick="nextStep()" class="btn-block btn-lg btn-outline-primary">Next
+                            Step
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
+        {{!-- Step3 --}}
+        <div id="step3" class="p-2 flex-grow-1 bd-highlight" style="display: none">
+            <div class="px-5">
+                <div class="text-center pb-3" id="secondHeaderText">
+                    <span style="font-size: 38px" class="text-success">
+                        Final <span style="font-size: 38px" class="lead text-dark">
+                            Group Responses</span>
+                    </span>
+                    <footer align="left" class="lead text-muted">The final decision has been made! The names and
+                        responses of all the group members are shown below.
+                    </footer>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span id="userName1" class="lead"> </span>
+                        <div id="userFinalAnswer1">
 
-                        <div id="yourAnswer" style="display:none;">
-                            <div class="border rounded">
-                                <a class="lead mx-2 mt-3">
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span id="userName2" class="lead"> </span>
+                        <div id="userFinalAnswer2">
+
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span id="userName3" class="lead"> </span>
+                        <div id="userFinalAnswer3">
+
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span id="userName4" class="lead"> </span>
+                        <div id="userFinalAnswer4">
+
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div id="yourAnswer">
+                            <div class=" border rounded d-flex justify-content-between">
+                                <p class="lead mx-2 mt-3">
                                     <b>Your final choice is</b>
-                                </a>
+                                </p>
                                 <footer id="yourAnswerBtn" class="mx-2 pt-2 mb-2">
 
                                 </footer>
@@ -272,17 +336,16 @@
                         </div>
 
                     <li class="list-group-item">
-                        <button id="nextStep2" onclick="nextStep()" class="btn-block btn-lg btn-outline-primary">Next
+                        <button id="nextStep3" onclick="nextStep()" class="btn-block btn-lg btn-outline-primary">Next
                             Step
                         </button>
                     </li>
                 </ul>
-
-
             </div>
         </div>
 
-        <div id="playlist" class="p-2 bd-highlight">
+        {{!-- Playlist --}}
+        <div id="playlist" style="display: none" class="p-2 bd-highlight">
             <div class="card" style="width: 20rem;">
                 <li class="list-group-item active text-center">Playlist</li>
                 <ul class="list-group list-group-flush">
@@ -302,12 +365,9 @@
         </div>
 
     </div>
+
+    {{!-- Loading --}}
     <div id="loading" class="text-center" style="padding-top: 20%; display: none">
-        <div class="text-success">
-            <div class="spinner-grow" style="width: 4rem; height: 4rem;" role="status">
-            </div>
-        </div>
-        <div class="lead">Gathering all responses</div>
     </div>
 
 </div>
@@ -327,9 +387,7 @@
                 $("#player").html("<audio controls src=" + response.preview_url + " class='embed-responsive-item'>  <source> </audio>")
                 $("#trackName").text(response.name)
                 $("#artistName").text(response.artists[0].name)
-                $("#track").show();
-                $("#user").hide();
-                $("#yourAnswer").hide();
+                $("#step1").show();
                 // remove all active buttons
                 $("#artistYes").removeClass("active");
                 $("#artistNo").removeClass("active");
@@ -364,7 +422,7 @@
     console.log(randomTracks25)
     console.log(randomTracks75)
 
-    let randomName = ['James', 'Kitsana', 'Wongsathorn', 'Bruce', 'Sathira', 'Wasuthun', 'Micky', 'Mond', 'Steve', 'Tom']
+    let randomName = {{{ users }}}
     let currentScore = 0
 
     // shuffle track arrays
@@ -378,23 +436,16 @@
     let startRandomFrom = ""
     let yesAnswerCount = 0
     let noAnswerCount = 0
-    // generate a random boolean, [0, 0.5) is starting from randomTracks25, [0.5, 1) is starting from randomTracks75.
-    let random = Math.random();
-    let randomTrackId = ""
-    if (random >= 0.5) {
-        console.log(75)
-        startRandomFrom = '75'
-        randomTrackId = randomTracks75.pop()
-        recommendationArray[arrayIndex].list = 75
+
+    if (currentStep == 0) {
+        hideAllSteps() // hide every step first
+        showLoading("Looking for group members")
+        let min = 2,
+            max = 5;
+        // generate Random number between 5-10
+        let rand = Math.floor(Math.random() * (max - min + 1) + min);
+        setTimeout(showGroupMembers, rand * 1000);
     }
-    else {
-        console.log(25)
-        startRandomFrom = '25'
-        randomTrackId = randomTracks25.pop()
-        recommendationArray[arrayIndex].list = 25
-    }
-    // display initial track
-    showTrackById(randomTrackId)
 
     function knowArtist(answer) {
         recommendationArray[arrayIndex].know_artist = answer
@@ -532,12 +583,9 @@
         }
     }
 
-    function showLoading() {
-        $("#track").hide();
-        $("#user").hide();
-        $("#playlist").hide();
-        $("#loading").show();
-        //$("#nextStep").hide();
+    function showLoading(text) {
+        $("#loading").show()
+        $("#loading").html(loadingHTML(text));
     }
 
     function showAnonymousUser() {
@@ -588,10 +636,7 @@
         }
         $("#loading").hide();
         $("#playlist").show();
-        $("#user").show();
-        $("#firstHeaderText").show();
-        $("#secondHeaderText").hide();
-        $("#repeatAnswer").show();
+        $("#step2").show();
     }
 
     function showResult() {
@@ -606,22 +651,22 @@
             if (recommendationArray[arrayIndex]["bot" + index + "_a"] == 3 || recommendationArray[arrayIndex]["bot" + index + "_a"] == 4) {
                 if (random >= 0.5) {
                     recommendationArray[arrayIndex]["bot" + index + "_b"] = 4
-                    $("#userAnswer" + (index + 1)).html(yesButtonHTML(true))
+                    $("#userFinalAnswer" + (index + 1)).html(yesButtonHTML(true))
                 }
                 else {
                     recommendationArray[arrayIndex]["bot" + index + "_b"] = 3
-                    $("#userAnswer" + (index + 1)).html(maybeYesButtonHTML(true))
+                    $("#userFinalAnswer" + (index + 1)).html(maybeYesButtonHTML(true))
                 }
             }
             else {
                 shouldAdd = false
                 if (random >= 0.5) {
                     recommendationArray[arrayIndex]["bot" + index + "_b"] = 1
-                    $("#userAnswer" + (index + 1)).html(noButtonHTML(true))
+                    $("#userFinalAnswer" + (index + 1)).html(noButtonHTML(true))
                 }
                 else {
                     recommendationArray[arrayIndex]["bot" + index + "_b"] = 2
-                    $("#userAnswer" + (index + 1)).html(maybeNoButtonHTML(true))
+                    $("#userFinalAnswer" + (index + 1)).html(maybeNoButtonHTML(true))
                 }
             }
             // set name of dummy user
@@ -637,10 +682,6 @@
         else {
             $("#statusAlert").html(notAddedPlaylistAlert(trackName, artistName));
         }
-        $("#loading").hide();
-        $("#playlist").show();
-        $("#user").show();
-        $("#repeatAnswer").hide();
 
         if (currentScore == 3) {
             yesAnswerCount++
@@ -658,21 +699,47 @@
             noAnswerCount++
             $("#yourAnswerBtn").html(noButtonHTML(true));
         }
-        $("#yourAnswer").show();
-        $("#firstHeaderText").hide();
-        $("#secondHeaderText").show();
 
         if (playlistCount == 10) {
-            $("#nextStep2").html('Finish');
+            $("#nextStep3").html('Finish');
         }
+        $("#loading").hide();
+        $("#playlist").show();
+        $("#step3").show();
     }
 
+    function showGroupMembers() {
+        $("#loading").hide();
+        $("#step0").show();
+    }
     function nextStep() {
         if (currentStep == 0) {
+            currentStep++
+            hideAllSteps() // hide every step first
+            // generate a random boolean, [0, 0.5) is starting from randomTracks25, [0.5, 1) is starting from randomTracks75.
+            let random = Math.random();
+            let randomTrackId = ""
+            if (random >= 0.5) {
+                console.log(75)
+                startRandomFrom = '75'
+                randomTrackId = randomTracks75.pop()
+                recommendationArray[arrayIndex].list = 75
+            }
+            else {
+                console.log(25)
+                startRandomFrom = '25'
+                randomTrackId = randomTracks25.pop()
+                recommendationArray[arrayIndex].list = 25
+            }
+            // display initial track
+            showTrackById(randomTrackId)
+        }
+        else if (currentStep == 1) {
             if (isCompletedStep1()) {
-                showLoading()
-                let min = 0,
-                    max = 0;
+                hideAllSteps() // hide every step first
+                showLoading("Gathering all responses")
+                let min = 2,
+                    max = 5;
                 // generate Random number between 5-10
                 let rand = Math.floor(Math.random() * (max - min + 1) + min);
                 recommendationArray[arrayIndex].waiting_a = rand
@@ -683,11 +750,12 @@
                 $('#alertModel').modal('show')
             }
         }
-        else if (currentStep == 1) {
+        else if (currentStep == 2) {
             if (isCompletedStep2()) {
-                showLoading()
-                let min = 0,
-                    max = 0;
+                hideAllSteps() // hide every step first
+                showLoading("Gathering all responses")
+                let min = 2,
+                    max = 5;
                 // generate Random number between 5-10
                 let rand = Math.floor(Math.random() * (max - min + 1) + min);
                 recommendationArray[arrayIndex].waiting_b = rand
@@ -698,11 +766,12 @@
                 $('#alertModel').modal('show')
             }
         }
-        else if (currentStep == 2) {
+        else if (currentStep == 3) {
             if (playlistCount >= 10) {
                 // do the survey
             }
             else {
+                hideAllSteps() // hide every step first
                 postRecommendationData(arrayIndex) // send current recommendation data to server
                 arrayIndex++ // move cursor to next song index
                 recommendationArray[arrayIndex] = {} // initialize song recommendation object
@@ -732,9 +801,17 @@
                         showTrackById(randomTracks75.pop())
                     }
                 }
-                currentStep = 0
+                currentStep = 1
             }
         }
+    }
+
+    function hideAllSteps() {
+        $("#step0").hide();
+        $("#step1").hide();
+        $("#step2").hide();
+        $("#step3").hide();
+        $("#playlist").hide();
     }
 
     function postRecommendationData(index) {
@@ -775,6 +852,16 @@
                                     Not everybody agreed on this song. Hence, <a class="alert-link">${trackName}</a> by <a class="alert-link lead">${artistName}</a> is not added to the playlist.
                                 </div>`
     }
+
+    function loadingHTML(text) {
+        return `<div class="text-success">
+            <div class="spinner-grow" style="width: 4rem; height: 4rem;" role="status">
+            </div>
+        </div>
+        <div class="lead">${text}</div>`
+    }
+
+
 </script>
 
 <style>
