@@ -258,12 +258,12 @@
 
                         <div id="yourAnswer" style="display:none;">
                             <div class="border rounded">
-                                <a class="lead mx-2 mt-3">
+                                <span class="lead mx-2 mt-3">
                                     Your final choice is
-                                </a>
-                                <footer id="yourAnswerBtn" class="mx-2 pt-2 mb-2">
+                                </span>
+                                <div id="yourAnswerBtn" class="mx-2 pt-2 mb-2">
 
-                                </footer>
+                                </div>
                             </div>
                             <div id="statusAlert" class="pt-3">
 
@@ -625,7 +625,7 @@
                 }
             }
             // set name of dummy user
-            $("#userName" + (index + 1)).html((index + 1) + '. ' + randomName[index])
+            $("#userName" + (index + 1)).html(randomName[index])
         }
         let trackId = $("#trackId").text()
         let artistName = $("#artistName").text()
