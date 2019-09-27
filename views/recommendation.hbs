@@ -1,17 +1,25 @@
-{{!-- <script>
-    window.addEventListener("beforeunload", function (event) {
-        setCookie("haveBeen", songId)
-        event.returnValue = "\o/";
-        return ""
-    });
-    // before rendering, check if is this component reloaded
+<script>
+    // save every state before leaving
     let url = window.location.href.split('/')
     let songId = url[url.length - 1]
-    console.log((getCookie("haveBeen")))
-    if (getCookie("haveBeen") === songId) {
-        window.location.href = '/tracks'
-    }
-</script> --}}
+    window.addEventListener("beforeunload", function (event) {
+        setCookie("haveBeen_" + songId, true)
+        setCookie("randomTracks25_" + songId, JSON.stringify(randomTracks25))
+        setCookie("randomTracks75_" + songId, JSON.stringify(randomTracks75))
+        setCookie("randomName_" + songId, JSON.stringify(randomName))
+        setCookie("currentScore_" + songId, currentScore)
+        setCookie("recommendationArray_" + songId, JSON.stringify(recommendationArray))
+        setCookie("arrayIndex_" + songId, arrayIndex)
+        setCookie("currentStep_" + songId, currentStep)
+        setCookie("startRandomFrom_" + songId, startRandomFrom)
+        setCookie("yesAnswerCount_" + songId, yesAnswerCount)
+        setCookie("noAnswerCount_" + songId, noAnswerCount)
+        setCookie("playlist_" + songId, JSON.stringify(playlist))
+        return false
+    });
+    console.log(JSON.parse(getCookie('randomTracks25_' + songId)))
+
+</script>
 
 <div class="container">
     <!-- Modal -->
@@ -44,7 +52,8 @@
                 Group <span class="text-dark">
                     Members</span>
             </span>
-            <footer align="left" class="lead text-muted">Based on the reference song you chose, we found the following people with a similar taste.
+            <footer align="left" class="lead text-muted">Based on the reference song you chose, we found the following
+                people with a similar taste.
             </footer>
         </div>
         <ul class="list-group list-group-flush">
@@ -368,6 +377,7 @@
 </div>
 
 <script>
+
     function showTrackById(trackId) {
         recommendationArray[arrayIndex].track_id = trackId
         recommendationArray[arrayIndex].user_id = user_id
@@ -396,10 +406,10 @@
                 $("#repeatAnswer2").removeClass("active")
                 $("#repeatAnswer3").removeClass("active")
                 $("#repeatAnswer4").removeClass("active")
+                currentStep = 1
             }
         })
     }
-
 
     function shuffle(array) {
         for (var i = array.length; i > 1; i--) {
@@ -412,27 +422,29 @@
 
     let access_token = getCookie('access_token')
     let user_id = getCookie('user_id')
-    let randomTracks25 = {{{ randomTracks25 }}}
-    let randomTracks75 = {{{ randomTracks75 }}}
-    console.log(randomTracks25)
-    console.log(randomTracks75)
-
-    let randomName = {{{ users }}}
-    let currentScore = 0
-
-    // shuffle track arrays
-    shuffle(randomTracks25)
-    shuffle(randomTracks75)
-    let recommendationArray = [] // data for sending to server by using jQuery POST
-    let arrayIndex = 0 // index for pushing to recommendationArray
-    recommendationArray[arrayIndex] = {}
-    let currentStep = 0
-    let playlistCount = 0
-    let startRandomFrom = ""
-    let yesAnswerCount = 0
-    let noAnswerCount = 0
-
+    let haveBeen = (getCookie("haveBeen_" + songId))
+    let randomTracks25 = haveBeen ? JSON.parse(getCookie('randomTracks25_' + songId)) : {{{ randomTracks25 }}}
+    let randomTracks75 = haveBeen ? JSON.parse(getCookie('randomTracks75_' + songId)) : {{{ randomTracks75 }}}
+    let randomName = haveBeen ? JSON.parse(getCookie('randomName_' + songId)) : {{{ users }}}
+    let currentScore = haveBeen ? getCookie('currentScore_' + songId) : 0
+    // shuffle track arrays if not have been here before
+    if (!haveBeen) {
+        shuffle(randomTracks25)
+        shuffle(randomTracks75)
+    }
+    let recommendationArray = haveBeen ? JSON.parse(getCookie('recommendationArray_' + songId)) : [] // data for sending to server by using jQuery POST
+    let arrayIndex = haveBeen ? getCookie('arrayIndex_' + songId) : 0 // index for pushing to recommendationArray
+    let currentStep = haveBeen ? getCookie('currentStep_' + songId) : 0
+    let startRandomFrom = haveBeen ? getCookie('startRandomFrom_' + songId) : ""
+    let yesAnswerCount = haveBeen ? getCookie('yesAnswerCount_' + songId) : 0
+    let noAnswerCount = haveBeen ? getCookie('noAnswerCount_' + songId) : 0
+    let playlist = haveBeen ? JSON.parse(getCookie('playlist_' + songId)) : []
+    // initialize playlist
+    for (let index = 0; index < playlist.length; index++) {
+        $("#track" + (index + 1)).html(`<span>${index + 1}. </span><a class="text-success">${playlist[index].trackName}</a><footer class="blockquote-footer"> ${playlist[index].artistName}</footer>`)
+    }
     if (currentStep == 0) {
+        recommendationArray[arrayIndex] = {}
         hideAllSteps() // hide every step first
         showLoading("Looking for group members")
         let min = 2,
@@ -441,6 +453,103 @@
         let rand = Math.floor(Math.random() * (max - min + 1) + min);
         setTimeout(showGroupMembers, rand * 1000);
     }
+    else if (currentStep == 1) {
+        hideAllSteps() // hide every step first
+        showTrackById(recommendationArray[arrayIndex].track_id)
+    }
+    else if (currentStep == 2) {
+        hideAllSteps() // hide every step first
+        // initialize current track
+        $.ajax({
+            url: 'https://api.spotify.com/v1/tracks/' + recommendationArray[arrayIndex].track_id,
+            headers: {
+                'Authorization': 'Bearer ' + access_token
+            },
+            success: function (response) {
+                $("#img").attr("src", response.album.images[0].url);
+                $("#player").html('')
+                $("#player").html("<audio controls src=" + response.preview_url + " class='embed-responsive-item'>  <source> </audio>")
+                $("#trackName").text(response.name)
+                $("#artistName").text(response.artists[0].name)
+                for (let index = 0; index < 4; index++) {
+                    let score = recommendationArray[arrayIndex]["bot" + index + "_a"]
+                    if (score == 1) {
+                        $("#userAnswer" + (index + 1)).html(noButtonHTML(false))
+                    }
+                    else if (score == 2) {
+                        $("#userAnswer" + (index + 1)).html(maybeNoButtonHTML(false))
+                    }
+                    else if (score == 3) {
+                        $("#userAnswer" + (index + 1)).html(maybeYesButtonHTML(false))
+                    }
+                    else if (score == 4) {
+                        $("#userAnswer" + (index + 1)).html(yesButtonHTML(false))
+                    }
+                }
+                $("#playlist").show();
+                $("#step2").show();
+            }
+        })
+    }
+    else if (currentStep == 3) {
+        hideAllSteps() // hide every step first
+        $.ajax({
+            url: 'https://api.spotify.com/v1/tracks/' + recommendationArray[arrayIndex].track_id,
+            headers: {
+                'Authorization': 'Bearer ' + access_token
+            },
+            success: function (response) {
+                let shouldAdd = false
+                if (currentScore == 3 || currentScore == 4) {
+                    shouldAdd = true
+                }
+                for (let index = 0; index < 4; index++) {
+                    if (recommendationArray[arrayIndex]["bot" + index + "_b"] == 4) {
+                        $("#userFinalAnswer" + (index + 1)).html(yesButtonHTML(true))
+                    }
+                    else if (recommendationArray[arrayIndex]["bot" + index + "_b"] == 3) {
+                        $("#userFinalAnswer" + (index + 1)).html(maybeYesButtonHTML(true))
+                    }
+                    else if (recommendationArray[arrayIndex]["bot" + index + "_b"] == 1) {
+                        shouldAdd = false
+                        $("#userFinalAnswer" + (index + 1)).html(noButtonHTML(true))
+                    }
+                    else if (recommendationArray[arrayIndex]["bot" + index + "_b"] == 2) {
+                        shouldAdd = false
+                        $("#userFinalAnswer" + (index + 1)).html(maybeNoButtonHTML(true))
+                    }
+                    $("#userName" + (index + 1)).html(randomName[index])
+                }
+
+                if (shouldAdd) {
+                    $("#statusAlert").html(addedPlaylistAlert(response.name, response.artists[0].name));
+                }
+                else {
+                    $("#statusAlert").html(notAddedPlaylistAlert(response.name, response.artists[0].name));
+                }
+
+                if (currentScore == 3) {
+                    $("#yourAnswerBtn").html(maybeYesButtonHTML(true));
+                }
+                else if (currentScore == 4) {
+                    $("#yourAnswerBtn").html(yesButtonHTML(true));
+                }
+                else if (currentScore == 2) {
+                    $("#yourAnswerBtn").html(maybeNoButtonHTML(true));
+                }
+                else {
+                    $("#yourAnswerBtn").html(noButtonHTML(true));
+                }
+                if (playlist.length == 10) {
+                    $("#nextStep3").html('Finish');
+                }
+                $("#playlist").show();
+                $("#step3").show();
+            }
+        })
+
+    }
+
 
     function knowArtist(answer) {
         recommendationArray[arrayIndex].know_artist = answer
@@ -632,6 +741,7 @@
         $("#loading").hide();
         $("#playlist").show();
         $("#step2").show();
+        currentStep++
     }
 
     function showResult() {
@@ -695,12 +805,13 @@
             $("#yourAnswerBtn").html(noButtonHTML(true));
         }
 
-        if (playlistCount == 10) {
+        if (playlist.length == 10) {
             $("#nextStep3").html('Finish');
         }
         $("#loading").hide();
         $("#playlist").show();
         $("#step3").show();
+        currentStep++
     }
 
     function showGroupMembers() {
@@ -713,7 +824,6 @@
             hideAllSteps() // hide every step first
             // generate a random boolean, [0, 0.5) is starting from randomTracks25, [0.5, 1) is starting from randomTracks75.
             let random = Math.random();
-            let randomTrackId = ""
             if (random >= 0.5) {
                 console.log(75)
                 startRandomFrom = '75'
@@ -739,7 +849,7 @@
                 let rand = Math.floor(Math.random() * (max - min + 1) + min);
                 recommendationArray[arrayIndex].waiting_a = rand
                 setTimeout(showAnonymousUser, rand * 1000);
-                currentStep++
+                //currentStep++
             }
             else {
                 $('#alertModel').modal('show')
@@ -755,14 +865,14 @@
                 let rand = Math.floor(Math.random() * (max - min + 1) + min);
                 recommendationArray[arrayIndex].waiting_b = rand
                 setTimeout(showResult, rand * 1000);
-                currentStep++
+                //currentStep++
             }
             else {
                 $('#alertModel').modal('show')
             }
         }
         else if (currentStep == 3) {
-            if (playlistCount >= 10) {
+            if (playlist.length >= 10) {
                 // do the survey
             }
             else {
@@ -796,7 +906,6 @@
                         showTrackById(randomTracks75.pop())
                     }
                 }
-                currentStep = 1
             }
         }
     }
@@ -819,8 +928,14 @@
     }
 
     function addPlaylist(trackId, trackName, artistName) {
-        $("#track" + (playlistCount + 1)).html(`<span>${playlistCount + 1}. </span><a class="text-success">${trackName}</a><footer class="blockquote-footer"> ${artistName}</footer>`)
-        playlistCount++
+        playlist.push({
+            trackId,
+            trackName,
+            artistName
+        })
+        for (let index = 0; index < playlist.length; index++) {
+            $("#track" + (index + 1)).html(`<span>${index + 1}. </span><a class="text-success">${playlist[index].trackName}</a><footer class="blockquote-footer"> ${playlist[index].artistName}</footer>`)
+        }
     }
 
     function noButtonHTML(isActive) {
