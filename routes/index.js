@@ -13,9 +13,9 @@ var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 var mysql = require('mysql');
 var db = mysql.createConnection({
   host: 'sql7.freemysqlhosting.net',
-  user: 'sql7304860',
-  password: 'JJ8VcE1ptp',
-  database: 'sql7304860'
+  user: 'sql7306616',
+  password: 'Hw9KNIRAgs',
+  database: 'sql7306616'
 });
 
 db.connect();
