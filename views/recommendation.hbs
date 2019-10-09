@@ -367,16 +367,94 @@
                 </ul>
             </div>
         </div>
-
     </div>
 
-    {{!-- Loading --}}
-    <div id="loading" class="text-center" style="padding-top: 20%; display: none">
+    {{!-- Step4 --}}
+
+    <div id="step4" class="border shadow" style="display: none">
+        <div class="text-center pt-2 px-5">
+            <span style="font-size: 38px" class="lead text-bold text-success">
+                Survey <span class="text-dark">
+                    Questions</span>
+            </span>
+            <footer align="left" class="lead text-muted">Note: Survey questions
+            </footer>
+        </div>
+        <small class="px-5 text-muted">
+            1 = Disagree strongly,
+            2 = Disagree moderately,
+            3 = Disagree a little,
+            4 = Neither agree nor disagree,
+            5 = Agree a little,
+            6 = Agree moderately,
+            7 = Agree strongly
+        </small>
+        <div class="px-5">
+            <hr>
+        </div>
+        <form onsubmit="return validateForm()" name="formQuestion" action="/surveys" method="POST">
+            <div class="px-5">
+                {{#each (jsonToObj surveys)}}
+                <span class="text-success lead">
+                    {{inc @index}}. {{this}}
+                </span>
+                <div class="pt-2">
+                    <div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input value="1" type="radio" id="radio{{@index}}-1" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-1">1</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="2" type="radio" id="radio{{@index}}-2" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-2">2</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="3" type="radio" id="radio{{@index}}-3" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-3">3</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="4" type="radio" id="radio{{@index}}-4" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-4">4</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-5">5</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="6" type="radio" id="radio{{@index}}-6" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-6">6</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="7" type="radio" id="radio{{@index}}-7" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-7">7</label>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                {{/each}}
+            </div>
+            <button id="nextStep4" type="submit" class="btn-block btn-lg btn btn-success">Finish</button>
+        </form>
+
     </div>
+</div>
+
+{{!-- Loading --}}
+<div id="loading" class="text-center" style="padding-top: 20%; display: none">
+</div>
 
 </div>
 
 <script>
+
+    let PLAYLIST_MAX = 10
 
     function showTrackById(trackId) {
         recommendationArray[arrayIndex].track_id = trackId
@@ -412,9 +490,9 @@
     }
 
     function shuffle(array) {
-        for (var i = array.length; i > 1; i--) {
-            var r = Math.floor(Math.random() * i);
-            var temp = array[r];
+        for (let i = array.length; i > 1; i--) {
+            let r = Math.floor(Math.random() * i);
+            let temp = array[r];
             array[r] = array[i - 1];
             array[i - 1] = temp;
         }
@@ -435,6 +513,7 @@
     let recommendationArray = haveBeen ? JSON.parse(getCookie('recommendationArray_' + songId)) : [] // data for sending to server by using jQuery POST
     let arrayIndex = haveBeen ? getCookie('arrayIndex_' + songId) : 0 // index for pushing to recommendationArray
     let currentStep = haveBeen ? getCookie('currentStep_' + songId) : 0
+    // let currentStep = 4
     let startRandomFrom = haveBeen ? getCookie('startRandomFrom_' + songId) : ""
     let yesAnswerCount = haveBeen ? getCookie('yesAnswerCount_' + songId) : 0
     let noAnswerCount = haveBeen ? getCookie('noAnswerCount_' + songId) : 0
@@ -540,14 +619,18 @@
                 else {
                     $("#yourAnswerBtn").html(noButtonHTML(true));
                 }
-                if (playlist.length == 10) {
-                    $("#nextStep3").html('Finish');
+                if (playlist.length == PLAYLIST_MAX) {
+                    $("#nextStep3").html('Do surveys');
                 }
                 $("#playlist").show();
                 $("#step3").show();
             }
         })
 
+    }
+    else if (currentStep == 4) {
+        hideAllSteps() // hide every step first
+        $("#step4").show();
     }
 
 
@@ -805,8 +888,8 @@
             $("#yourAnswerBtn").html(noButtonHTML(true));
         }
 
-        if (playlist.length == 10) {
-            $("#nextStep3").html('Finish');
+        if (playlist.length == PLAYLIST_MAX) {
+            $("#nextStep3").html('Do surveys');
         }
         $("#loading").hide();
         $("#playlist").show();
@@ -872,14 +955,16 @@
             }
         }
         else if (currentStep == 3) {
-            if (playlist.length >= 10) {
+            hideAllSteps() // hide every step first
+            postRecommendationData(arrayIndex) // send current recommendation data to server
+            arrayIndex++ // move cursor to next song index
+            recommendationArray[arrayIndex] = {} // initialize song recommendation object
+            if (playlist.length >= PLAYLIST_MAX) {
                 // do the survey
-            }
-            else {
                 hideAllSteps() // hide every step first
-                postRecommendationData(arrayIndex) // send current recommendation data to server
-                arrayIndex++ // move cursor to next song index
-                recommendationArray[arrayIndex] = {} // initialize song recommendation object
+                currentStep = 4
+                $("#step4").show();
+            } else {
                 if (startRandomFrom == '25') {
                     if (noAnswerCount >= 5) {
                         recommendationArray[arrayIndex].list = 75
@@ -904,9 +989,33 @@
                     else {
                         recommendationArray[arrayIndex].list = 75
                         showTrackById(randomTracks75.pop())
+
                     }
                 }
             }
+        }
+    }
+
+    function validateForm() {
+        let q_1 = document.forms["formQuestion"]["q_1"].value;
+        let q_2 = document.forms["formQuestion"]["q_2"].value;
+        let q_3 = document.forms["formQuestion"]["q_3"].value;
+        let q_4 = document.forms["formQuestion"]["q_4"].value;
+        let q_5 = document.forms["formQuestion"]["q_5"].value;
+        let q_6 = document.forms["formQuestion"]["q_6"].value;
+        let q_7 = document.forms["formQuestion"]["q_7"].value;
+        let q_8 = document.forms["formQuestion"]["q_8"].value;
+        let q_9 = document.forms["formQuestion"]["q_9"].value;
+        let q_10 = document.forms["formQuestion"]["q_10"].value;
+        let q_11 = document.forms["formQuestion"]["q_11"].value;
+        let q_12 = document.forms["formQuestion"]["q_12"].value;
+        let q_13 = document.forms["formQuestion"]["q_13"].value;
+        let q_14 = document.forms["formQuestion"]["q_14"].value;
+        let q_15 = document.forms["formQuestion"]["q_15"].value;
+        if (q_1 == "" || q_2 == "" || q_3 == "" || q_4 == "" || q_5 == "" || q_6 == "" || q_7 == "" || q_8 == "" || q_9 == "" || q_10 == "" ||
+            q_11 == "" || q_12 == "" || q_13 == "" || q_14 == "" || q_15 == "") {
+            $('#alertModel').modal('show')
+            return false
         }
     }
 
@@ -915,6 +1024,7 @@
         $("#step1").hide();
         $("#step2").hide();
         $("#step3").hide();
+        $("#step4").hide();
         $("#playlist").hide();
     }
 
@@ -970,8 +1080,6 @@
         </div>
         <div class="lead">${text}</div>`
     }
-
-
 </script>
 
 <style>
