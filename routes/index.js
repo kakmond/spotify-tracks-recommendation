@@ -6,16 +6,15 @@ var querystring = require('querystring');
 
 var client_id = 'effb4e77d8764a29a23dc735f6f11dfa'; // Your client id
 var client_secret = 'ef52e8965b47466e812d2d3ce761e582'; // Your secret
-var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
-// var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
-// var redirect_uri = 'https://spotify-group2.herokuapp.com/callback'; // Your redirect uri
+// var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 
 var mysql = require('mysql');
 var db = mysql.createConnection({
   host: 'sql7.freemysqlhosting.net',
-  user: 'sql7306616',
-  password: 'Hw9KNIRAgs',
-  database: 'sql7306616'
+  user: 'sql7307980',
+  password: 'H9aHAUTQ2n',
+  database: 'sql7307980'
 });
 
 db.connect();
@@ -26,6 +25,8 @@ db.query("CREATE TABLE IF NOT EXISTS track (user_id INTEGER PRIMARY KEY, track_1
 db.query("CREATE TABLE IF NOT EXISTS popularity25 (user_id INTEGER, track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS popularity75 (user_id INTEGER, track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS recommendation (user_id INTEGER, track_id TEXT, list INTEGER, know_song INTEGER, know_artist INTEGER, answer_a INTEGER, waiting_a INTEGER, bot0_a INTEGER, bot1_a INTEGER, bot2_a INTEGER, bot3_a INTEGER, answer_b INTEGER, waiting_b INTEGER, bot0_b INTEGER, bot1_b INTEGER, bot2_b INTEGER, bot3_b INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS questions (user_id INTEGER, age INTEGER, gender TEXT, home_country TEXT, like_country TEXT, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS surveys (user_id INTEGER, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 
 /**
  * Generates a random string containing numbers and letters
@@ -110,6 +111,23 @@ router.get('/song/:id', checkToken, function (req, res) {
 
 router.get('/recommendation/:id', checkToken, function (req, res) {
   let randomName = ['James', 'Sathira', 'Micky', 'Steve']
+  let surveys = [
+    "I spend a lot of my free time doing music-related activities.",
+    "I enjoy writing about music, for example on blogs and forums.",
+    "If somebody starts singing a song I don't know, I can usually join in.",
+    "I can sing or play music from memory.",
+    "I am able to hit the right notes when I sing along with a recording.",
+    "I can compare and discuss differences between two performances or versions of the same piece of music.",
+    "I have never been complimented for my talents as a musical performer.",
+    "I often read or search the internet for things related to music.",
+    "I am not able to sing in harmony when somebody is singing a familiar tune.",
+    "I am able to identify what is special about a given musical piece.",
+    "When I sing, I have no idea whether I'm in tune or not.",
+    "Music is kind of an addiction for me - I couldn't live without it.",
+    "I don’t like singing in public because I’m afraid that I would sing wrong notes.",
+    "I would not consider myself a musician.",
+    "After hearing a new song two or three times, I can usually sing it by myself."
+  ]
   let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
   // get track's detail
@@ -141,7 +159,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
             }
           }
         }
-        res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75), users: JSON.stringify(randomName) });
+        res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75), users: JSON.stringify(randomName), surveys: JSON.stringify(surveys) });
       });
     });
   });
@@ -274,5 +292,68 @@ function checkToken(req, res, next) {
     res.render('login')
   }
 }
+
+router.get('/questions', checkToken, function (req, res) {
+  let questions = [
+    "Extraverted, enthusiastic.",
+    "Critical, quarrelsome.",
+    "Dependable, self-disciplined.",
+    "Anxious, easily upset.",
+    "Open to new experiences, complex.",
+    "Reserved, quiet.",
+    "Sympathetic, warm.",
+    "Disorganized, careless.",
+    "Calm, emotionally stable.",
+    "Conventional, uncreative."
+  ]
+  res.render('questions', {
+    questions
+  });
+})
+
+router.post('/questions/', checkToken, function (req, res) {
+  let questionObject = req.body
+  let user_id = req.cookies.user_id;
+  let age = questionObject.age
+  let gender = questionObject.gender
+  let home_country = questionObject.home_country
+  let like_country = questionObject.like_country
+  let q_1 = questionObject.q_1
+  let q_2 = questionObject.q_2
+  let q_3 = questionObject.q_3
+  let q_4 = questionObject.q_4
+  let q_5 = questionObject.q_5
+  let q_6 = questionObject.q_6
+  let q_7 = questionObject.q_7
+  let q_8 = questionObject.q_8
+  let q_9 = questionObject.q_9
+  let q_10 = questionObject.q_10
+  db.query("INSERT INTO questions (user_id, age, gender, home_country, like_country, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, age, gender, home_country, like_country, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10])
+  res.redirect('/tracks')
+}
+);
+
+router.post('/surveys/', checkToken, function (req, res) {
+  let user_id = req.cookies.user_id;
+  let questionObject = req.body
+  let q_1 = questionObject.q_1
+  let q_2 = questionObject.q_2
+  let q_3 = questionObject.q_3
+  let q_4 = questionObject.q_4
+  let q_5 = questionObject.q_5
+  let q_6 = questionObject.q_6
+  let q_7 = questionObject.q_7
+  let q_8 = questionObject.q_8
+  let q_9 = questionObject.q_9
+  let q_10 = questionObject.q_10
+  let q_11 = questionObject.q_11
+  let q_12 = questionObject.q_12
+  let q_13 = questionObject.q_13
+  let q_14 = questionObject.q_14
+  let q_15 = questionObject.q_15
+  db.query("INSERT INTO surveys (user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15])
+  res.redirect('/tracks')
+}
+);
 
 module.exports = router;
