@@ -27,5 +27,8 @@ module.exports = {
     },
     jsonToObj: function (obj) {
         return JSON.parse(obj);
+    },
+    inc: function (value) {
+        return parseInt(value) + 1;
     }
 }
