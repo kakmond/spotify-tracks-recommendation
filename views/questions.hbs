@@ -24,7 +24,7 @@
         <span style="font-size: 38px" class="lead text-bold text-success">
             Questions
         </span>
-        <footer align="left" class="lead text-muted">Note: We'll never share your information with anyone else.
+        <footer align="left" class="lead text-muted">Before we start, some questions about yourself. This will allow is to find matching people for your group.
         </footer>
     </div>
     <div class="border">
@@ -571,12 +571,10 @@
                         <br>
                         <small class="text-muted">
                             1 = Disagree strongly,
-                            2 = Disagree moderately,
-                            3 = Disagree a little,
-                            4 = Neither agree nor disagree,
-                            5 = Agree a little,
-                            6 = Agree moderately,
-                            7 = Agree strongly
+                            2 = Disagree,
+                            3 = Neither agree nor disagree,
+                            4 = Agree,
+                            5 = Agree strongly
                         </small>
                     </p>
                     {{#each questions}}
@@ -608,16 +606,6 @@
                             <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
                                 class="custom-control-input">
                             <label class="custom-control-label" for="radio{{@index}}-5">5</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
-                            <input value="6" type="radio" id="radio{{@index}}-6" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-6">6</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
-                            <input value="7" type="radio" id="radio{{@index}}-7" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-7">7</label>
                         </div>
                     </div>
                     <hr>
