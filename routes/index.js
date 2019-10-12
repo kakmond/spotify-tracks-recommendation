@@ -12,9 +12,9 @@ var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redir
 var mysql = require('mysql');
 var db = mysql.createConnection({
   host: 'sql7.freemysqlhosting.net',
-  user: 'sql7307980',
-  password: 'H9aHAUTQ2n',
-  database: 'sql7307980'
+  user: 'sql7308097',
+  password: 'IyekTkAC6P',
+  database: 'sql7308097'
 });
 
 db.connect();
