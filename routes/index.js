@@ -6,27 +6,27 @@ var querystring = require('querystring');
 
 var client_id = 'effb4e77d8764a29a23dc735f6f11dfa'; // Your client id
 var client_secret = 'ef52e8965b47466e812d2d3ce761e582'; // Your secret
-var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
-// var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+// var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 
 var mysql = require('mysql');
 var db = mysql.createConnection({
-  host: 'sql7.freemysqlhosting.net',
-  user: 'sql7308097',
-  password: 'IyekTkAC6P',
-  database: 'sql7308097'
+  host: 'db4free.net',
+  user: 'kakmond123',
+  password: '13052531',
+  database: 'spotifygroup',
 });
 
 db.connect();
 
 // create sqlite tables
-db.query("CREATE TABLE IF NOT EXISTS user (user_id INTEGER PRIMARY KEY, country TEXT, access_token TEXT, refresh_token TEXT)");
-db.query("CREATE TABLE IF NOT EXISTS track (user_id INTEGER PRIMARY KEY, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS popularity25 (user_id INTEGER, track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS popularity75 (user_id INTEGER, track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS recommendation (user_id INTEGER, track_id TEXT, list INTEGER, know_song INTEGER, know_artist INTEGER, answer_a INTEGER, waiting_a INTEGER, bot0_a INTEGER, bot1_a INTEGER, bot2_a INTEGER, bot3_a INTEGER, answer_b INTEGER, waiting_b INTEGER, bot0_b INTEGER, bot1_b INTEGER, bot2_b INTEGER, bot3_b INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS questions (user_id INTEGER, age INTEGER, gender TEXT, home_country TEXT, like_country TEXT, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS surveys (user_id INTEGER, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS user (user_id VARCHAR(36) PRIMARY KEY, country TEXT, access_token TEXT, refresh_token TEXT)");
+db.query("CREATE TABLE IF NOT EXISTS track (user_id VARCHAR(36) PRIMARY KEY, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS popularity25 (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS popularity75 (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS recommendation (user_id VARCHAR(36), track_id TEXT, list INTEGER, know_song INTEGER, know_artist INTEGER, answer_a INTEGER, waiting_a INTEGER, bot0_a INTEGER, bot1_a INTEGER, bot2_a INTEGER, bot3_a INTEGER, answer_b INTEGER, waiting_b INTEGER, bot0_b INTEGER, bot1_b INTEGER, bot2_b INTEGER, bot3_b INTEGER, startTime BIGINT, endTime BIGINT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS questions (user_id VARCHAR(36), age INTEGER, gender TEXT, home_country TEXT, like_country TEXT, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, q_16 INTEGER, q_17 INTEGER, q_18 INTEGER, q_19 INTEGER, q_20 INTEGER, q_21 INTEGER, q_22 INTEGER, q_23 INTEGER, q_24 INTEGER, q_25 INTEGER, q_26 INTEGER, q_27 INTEGER, q_28 INTEGER, q_29 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 
 /**
  * Generates a random string containing numbers and letters
@@ -126,7 +126,22 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
     "Music is kind of an addiction for me - I couldn't live without it.",
     "I don’t like singing in public because I’m afraid that I would sing wrong notes.",
     "I would not consider myself a musician.",
-    "After hearing a new song two or three times, I can usually sing it by myself."
+    // new questions
+    "After hearing a new song two or three times, I can usually sing it by myself.",
+    "I am satisfied with the songs that are in the playlist.",
+    "The songs in the playlist match my preferences",
+    "The songs in the playlist meet my needs.",
+    "I do not like the songs in the playlist",
+    "I would give the songs in the playlist a high rating.",
+    "The playlist could become one of my favorites",
+    "I would recommend this playlist to others",
+    "I think I would enjoy listening to the playlist",
+    "I am satisfied with the playlist",
+    "It was difficult to make a final decision on a song",
+    "Working with the group to decide on a song was easy",
+    "I had to make a lot of compromises when deciding on a song",
+    "The group was similar minded when deciding on a song",
+    "Which picture represents your relationship with the group best? The circle around 'X' represents the group, the circle around 'Me' represents you."
   ]
   let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
@@ -212,7 +227,7 @@ router.get('/callback', function (req, res) {
   }
 });
 
-router.get('/tracks', checkToken, function (req, res) {
+router.get('/tracks', [checkToken, hasAnsweredQuestions], function (req, res) {
   let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
   // retrive top tracks
@@ -272,7 +287,9 @@ router.post('/recommendation/', checkToken, function (req, res) {
   let bot1_b = recommendationObject.bot1_b
   let bot2_b = recommendationObject.bot2_b
   let bot3_b = recommendationObject.bot3_b
-  db.query("INSERT INTO recommendation (user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b])
+  let startTime = recommendationObject.startTime
+  let endTime = recommendationObject.endTime
+  db.query("INSERT INTO recommendation (user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b, startTime, endTime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b, startTime, endTime])
 }
 );
 
@@ -281,7 +298,7 @@ function checkToken(req, res, next) {
   if (token) {
     // try to retrive profile information
     request.get(profileOptions(token), function (error, response, body) {
-      if (body.error) {
+      if (error || body.error) {
         res.render('login')
       }
       else {
@@ -292,24 +309,6 @@ function checkToken(req, res, next) {
     res.render('login')
   }
 }
-
-router.get('/questions', checkToken, function (req, res) {
-  let questions = [
-    "Extraverted, enthusiastic.",
-    "Critical, quarrelsome.",
-    "Dependable, self-disciplined.",
-    "Anxious, easily upset.",
-    "Open to new experiences, complex.",
-    "Reserved, quiet.",
-    "Sympathetic, warm.",
-    "Disorganized, careless.",
-    "Calm, emotionally stable.",
-    "Conventional, uncreative."
-  ]
-  res.render('questions', {
-    questions
-  });
-})
 
 router.post('/questions/', checkToken, function (req, res) {
   let questionObject = req.body
@@ -351,9 +350,52 @@ router.post('/surveys/', checkToken, function (req, res) {
   let q_13 = questionObject.q_13
   let q_14 = questionObject.q_14
   let q_15 = questionObject.q_15
-  db.query("INSERT INTO surveys (user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15])
+  let q_16 = questionObject.q_16
+  let q_17 = questionObject.q_17
+  let q_18 = questionObject.q_18
+  let q_19 = questionObject.q_19
+  let q_20 = questionObject.q_20
+  let q_21 = questionObject.q_21
+  let q_22 = questionObject.q_22
+  let q_23 = questionObject.q_23
+  let q_24 = questionObject.q_24
+  let q_25 = questionObject.q_25
+  let q_26 = questionObject.q_26
+  let q_27 = questionObject.q_27
+  let q_28 = questionObject.q_28
+  let q_29 = questionObject.q_29
+
+  db.query("INSERT INTO surveys (user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29])
   res.redirect('/tracks')
 }
 );
+
+function hasAnsweredQuestions(req, res, next) {
+  let user_id = req.cookies.user_id;
+  const query = `SELECT * FROM questions WHERE user_id = ?`
+  const values = [user_id]
+  db.query(query, values, function (error, question) {
+    if (question.length > 0) {
+      next()
+    } else {
+      let questions = [
+        "Extraverted, enthusiastic.",
+        "Critical, quarrelsome.",
+        "Dependable, self-disciplined.",
+        "Anxious, easily upset.",
+        "Open to new experiences, complex.",
+        "Reserved, quiet.",
+        "Sympathetic, warm.",
+        "Disorganized, careless.",
+        "Calm, emotionally stable.",
+        "Conventional, uncreative."
+      ]
+      res.render('questions', {
+        questions
+      });
+    }
+  })
+}
+
 
 module.exports = router;

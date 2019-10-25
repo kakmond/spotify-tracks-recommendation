@@ -1,3 +1,17 @@
+<script>
+    window.addEventListener('beforeunload', function (e) {
+        if (validateForm(false)) {
+            return false
+        }
+        else {
+            // Cancel the event
+            e.preventDefault();
+            // Chrome requires returnValue to be set
+            e.returnValue = '';
+        }
+    });
+</script>
+
 <div class="container">
     <div class="modal fade" id="alertModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
@@ -11,7 +25,11 @@
                 </div>
                 <div class="modal-body">
                     <p class="lead">
-                        Please answer all questions.
+                        Please answer following questions:
+                        <br>
+                        <span id="wariningText" class="text-success">
+
+                        </span>
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -24,7 +42,8 @@
         <span style="font-size: 38px" class="lead text-bold text-success">
             Questions
         </span>
-        <footer align="left" class="lead text-muted">Before we start, some questions about yourself. This will allow is to find matching people for your group.
+        <footer align="left" class="lead text-muted">Before we start, some questions about yourself. This will allow is
+            to find matching people for your group.
         </footer>
     </div>
     <div class="border">
@@ -43,7 +62,7 @@
                                 <option selected>Choose...</option>
                                 <option>Male</option>
                                 <option>Female</option>
-								<option>Different</option>
+                                <option>Different</option>
                             </select>
 
                         </div>
@@ -579,7 +598,7 @@
                         </small>
                     </p>
                     {{#each questions}}
-                    <span class="text-success lead">
+                    <span id="questionText_{{inc @index}}" class="text-success lead">
                         {{inc @index}}. {{this}}
                     </span>
                     <div class="pt-2 px-5">
@@ -620,26 +639,49 @@
 </div>
 
 <script>
-    function validateForm() {
+    function validateForm(showError = true) {
         var age = document.forms["formQuestion"]["age"].value;
         var gender = document.forms["formQuestion"]["gender"].value;
         var home_country = document.forms["formQuestion"]["home_country"].value;
         var like_country = document.forms["formQuestion"]["like_country"].value;
-        var q_1 = document.forms["formQuestion"]["q_1"].value;
-        var q_2 = document.forms["formQuestion"]["q_2"].value;
-        var q_3 = document.forms["formQuestion"]["q_3"].value;
-        var q_4 = document.forms["formQuestion"]["q_4"].value;
-        var q_5 = document.forms["formQuestion"]["q_5"].value;
-        var q_6 = document.forms["formQuestion"]["q_6"].value;
-        var q_7 = document.forms["formQuestion"]["q_7"].value;
-        var q_8 = document.forms["formQuestion"]["q_8"].value;
-        var q_9 = document.forms["formQuestion"]["q_9"].value;
-        var q_10 = document.forms["formQuestion"]["q_10"].value;
 
-        if (age == "" || gender == "Choose..." || home_country == "Choose..." || like_country == "Choose..." || q_1 == ""
-            || q_1 == "" || q_2 == "" || q_3 == "" || q_4 == "" || q_5 == "" || q_6 == "" || q_7 == "" || q_8 == "" || q_9 == "" || q_10 == "") {
-            $('#alertModel').modal('show')
-            return false
+        let forms = []
+        let isValid = true
+        let errors = []
+        if (age == "") {
+            errors.push("Your age")
+            isValid = false
         }
+        if (gender == "Choose...") {
+            errors.push("Your gender")
+            isValid = false
+        }
+        if (home_country == "Choose...") {
+            errors.push("What is your current country of residence?")
+            isValid = false
+        }
+        if (like_country == "Choose...") {
+            errors.push("To which country do you most associate with?")
+            isValid = false
+        }
+        let hasFormError = 0
+        for (let questionIndex = 1; questionIndex <= 10; questionIndex++) {
+            if (document.forms["formQuestion"]["q_" + questionIndex].value == "") {
+                if (hasFormError == 0) {
+                    errors.push("I see myself as:")
+                    hasFormError++
+                }
+                let questionText = $("#questionText_" + questionIndex).text()
+                errors.push(questionText)
+                isValid = false
+            }
+        }
+        if (!isValid) {
+            $("#wariningText").html(errors.join('<br>'))
+            if (showError)
+                $('#alertModel').modal('show')
+            return false
+        } else
+            return true
     }
 </script>

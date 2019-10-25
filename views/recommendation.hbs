@@ -15,10 +15,20 @@
         setCookie("yesAnswerCount_" + songId, yesAnswerCount)
         setCookie("noAnswerCount_" + songId, noAnswerCount)
         setCookie("playlist_" + songId, JSON.stringify(playlist))
-        return false
+        if (currentStep == 4) {
+            if (validateForm(false)) {
+                return false
+            }
+            else {
+                // Cancel the event
+                event.preventDefault();
+                // Chrome requires returnValue to be set
+                event.returnValue = '';
+            }
+        }
+        else
+            return false
     });
-    console.log(JSON.parse(getCookie('randomTracks25_' + songId)))
-
 </script>
 
 <div class="container">
@@ -35,7 +45,11 @@
                 </div>
                 <div class="modal-body">
                     <p class="lead">
-                        Please answer all questions.
+                        Please answer following questions:
+                        <br>
+                        <span id="wariningText" class="text-success">
+
+                        </span>
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -393,7 +407,8 @@
         <form onsubmit="return validateForm()" name="formQuestion" action="/surveys" method="POST">
             <div class="px-5">
                 {{#each (jsonToObj surveys)}}
-                <span class="text-success lead">
+                {{#ifCond @index '!=' 28}}
+                <span id="questionText_{{inc @index}}" class="text-success lead">
                     {{inc @index}}. {{this}}
                 </span>
                 <div class="pt-2">
@@ -425,6 +440,65 @@
                         </div>
                     </div>
                 </div>
+                {{else}}
+                <span id="questionText_{{@index}}" class="text-success lead">
+                    {{inc @index}}. {{this}}
+                </span>
+                <div class="pt-2">
+                    <div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input value="1" type="radio" id="radio{{@index}}-1" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-1">
+                                <img src="/images/1.png" class="rounded h-75" alt="...">
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="2" type="radio" id="radio{{@index}}-2" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-2">
+                                <img src="/images/2.png" class="rounded h-75" alt="...">
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="3" type="radio" id="radio{{@index}}-3" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-3">
+                                <img src="/images/3.png" class="rounded h-75" alt="...">
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="4" type="radio" id="radio{{@index}}-4" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-4">
+                                <img src="/images/4.png" class="rounded h-75" alt="...">
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-5">
+                                <img src="/images/5.png" class="rounded h-75" alt="...">
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="6" type="radio" id="radio{{@index}}-6" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-6">
+                                <img src="/images/6.png" class="rounded h-75" alt="...">
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                            <input value="7" type="radio" id="radio{{@index}}-7" name="q_{{inc @index}}"
+                                class="custom-control-input">
+                            <label class="custom-control-label" for="radio{{@index}}-7">
+                                <img src="/images/7.png" class="rounded h-75" alt="...">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {{/ifCond}}
+
                 <hr>
                 {{/each}}
             </div>
@@ -500,8 +574,8 @@
     }
     let recommendationArray = haveBeen ? JSON.parse(getCookie('recommendationArray_' + songId)) : [] // data for sending to server by using jQuery POST
     let arrayIndex = haveBeen ? getCookie('arrayIndex_' + songId) : 0 // index for pushing to recommendationArray
-    let currentStep = haveBeen ? getCookie('currentStep_' + songId) : 0
-    // let currentStep = 4
+    //let currentStep = haveBeen ? getCookie('currentStep_' + songId) : 0
+    let currentStep = 4
     let startRandomFrom = haveBeen ? getCookie('startRandomFrom_' + songId) : ""
     let yesAnswerCount = haveBeen ? getCookie('yesAnswerCount_' + songId) : 0
     let noAnswerCount = haveBeen ? getCookie('noAnswerCount_' + songId) : 0
@@ -907,6 +981,7 @@
                 randomTrackId = randomTracks25.pop()
                 recommendationArray[arrayIndex].list = 25
             }
+            recommendationArray[arrayIndex].startTime = new Date().getTime()
             // display initial track
             showTrackById(randomTrackId)
         }
@@ -944,6 +1019,7 @@
         }
         else if (currentStep == 3) {
             hideAllSteps() // hide every step first
+            recommendationArray[arrayIndex].endTime = new Date().getTime()
             postRecommendationData(arrayIndex) // send current recommendation data to server
             arrayIndex++ // move cursor to next song index
             recommendationArray[arrayIndex] = {} // initialize song recommendation object
@@ -953,6 +1029,7 @@
                 currentStep = 4
                 $("#step4").show();
             } else {
+                recommendationArray[arrayIndex].startTime = new Date().getTime()
                 if (startRandomFrom == '25') {
                     if (noAnswerCount >= 5) {
                         recommendationArray[arrayIndex].list = 75
@@ -977,34 +1054,31 @@
                     else {
                         recommendationArray[arrayIndex].list = 75
                         showTrackById(randomTracks75.pop())
-
                     }
                 }
             }
         }
     }
 
-    function validateForm() {
-        let q_1 = document.forms["formQuestion"]["q_1"].value;
-        let q_2 = document.forms["formQuestion"]["q_2"].value;
-        let q_3 = document.forms["formQuestion"]["q_3"].value;
-        let q_4 = document.forms["formQuestion"]["q_4"].value;
-        let q_5 = document.forms["formQuestion"]["q_5"].value;
-        let q_6 = document.forms["formQuestion"]["q_6"].value;
-        let q_7 = document.forms["formQuestion"]["q_7"].value;
-        let q_8 = document.forms["formQuestion"]["q_8"].value;
-        let q_9 = document.forms["formQuestion"]["q_9"].value;
-        let q_10 = document.forms["formQuestion"]["q_10"].value;
-        let q_11 = document.forms["formQuestion"]["q_11"].value;
-        let q_12 = document.forms["formQuestion"]["q_12"].value;
-        let q_13 = document.forms["formQuestion"]["q_13"].value;
-        let q_14 = document.forms["formQuestion"]["q_14"].value;
-        let q_15 = document.forms["formQuestion"]["q_15"].value;
-        if (q_1 == "" || q_2 == "" || q_3 == "" || q_4 == "" || q_5 == "" || q_6 == "" || q_7 == "" || q_8 == "" || q_9 == "" || q_10 == "" ||
-            q_11 == "" || q_12 == "" || q_13 == "" || q_14 == "" || q_15 == "") {
-            $('#alertModel').modal('show')
+    function validateForm(showError = true) {
+        let forms = []
+        let isValid = true
+        let errors = []
+        for (let questionIndex = 1; questionIndex <= 29; questionIndex++) {
+            if (document.forms["formQuestion"]["q_" + questionIndex].value == "") {
+                let questionText = $("#questionText_" + questionIndex).text()
+                errors.push(questionText)
+                isValid = false
+            }
+        }
+        if (!isValid) {
+            $("#wariningText").html(errors.join('<br>'))
+            if (showError)
+                $('#alertModel').modal('show')
             return false
         }
+        else
+            return true
     }
 
     function hideAllSteps() {
