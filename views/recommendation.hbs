@@ -35,7 +35,7 @@
     <!-- Modal -->
     <div class="modal fade" id="alertModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Ooops!</h5>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="modal-body">
                     <p class="lead">
-                        Please answer following questions:
+                        Please answer all questions.
                         <br>
                         <span id="wariningText" class="text-success">
 
@@ -111,6 +111,12 @@
 
                             </footer>
                         </div>
+                        <ul style="display:none" class="pt-3 list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a class="text-muted">Track ID:</a>
+                                <footer><a id="trackId" class="text-reset lead"></a></footer>
+                            </li>
+                        </ul>
                         <ul class="pt-3 list-group list-group-flush">
                             <li class="list-group-item">
                                 <a class="text-muted">Song name:</a>
@@ -377,8 +383,53 @@
                     <li id="track8" class="list-group-item">8.</li>
                     <li id="track9" class="list-group-item">9.</li>
                     <li id="track10" class="list-group-item">10.</li>
-
                 </ul>
+            </div>
+            <button style="display: none" id="addUserPlaylist" class="mt-3 btn-block btn-lg btn-outline-success"
+                onclick="showSavePlaylist()">Save playlist
+            </button>
+        </div>
+
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Save playlist</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group lead">
+                            <label class="text-success" for="inputAge">Playlist name</label>
+                            <input name="playlistName" id="playlistName" class="form-control"
+                                placeholder="Playlist name">
+                            <div class="invalid-feedback">
+                                Please input a playlist name.
+                            </div>
+                        </div>
+                        <div class="form-group lead">
+                            <label class="text-success" for="inputAge">Description (optional)</label>
+                            <input name="playlistDescription" id="playlistDescription" class="form-control"
+                                placeholder="Playlist description">
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input checked type="checkbox" name="playlistPublic" class="custom-control-input"
+                                id="playlistPublic">
+                            <label class="custom-control-label" for="playlistPublic">Public playlist</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="saveButton" onclick="addUserPlaylist()" class="btn btn-success">
+                            <span id="saveButtonText">
+                                Save
+                            </span>
+                            <span style="display:none" id="savePlaylistLoading" class="spinner-grow spinner-grow-sm"
+                                role="status" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -441,54 +492,54 @@
                     </div>
                 </div>
                 {{else}}
-                <span id="questionText_{{@index}}" class="text-success lead">
+                <span id="questionText_{{inc @index}}" class="text-success lead">
                     {{inc @index}}. {{this}}
                 </span>
                 <div class="pt-2">
                     <div>
-                        <div class="custom-control custom-radio custom-control-inline">
+                        <div class="custom-control custom-radio custom-control-inline col-md-5">
                             <input value="1" type="radio" id="radio{{@index}}-1" name="q_{{inc @index}}"
                                 class="custom-control-input">
                             <label class="custom-control-label" for="radio{{@index}}-1">
                                 <img src="/images/1.png" class="rounded h-75" alt="...">
                             </label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                        <div class="custom-control custom-radio custom-control-inline col-md-5">
                             <input value="2" type="radio" id="radio{{@index}}-2" name="q_{{inc @index}}"
                                 class="custom-control-input">
                             <label class="custom-control-label" for="radio{{@index}}-2">
                                 <img src="/images/2.png" class="rounded h-75" alt="...">
                             </label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                        <div class="custom-control custom-radio custom-control-inline col-md-5">
                             <input value="3" type="radio" id="radio{{@index}}-3" name="q_{{inc @index}}"
                                 class="custom-control-input">
                             <label class="custom-control-label" for="radio{{@index}}-3">
                                 <img src="/images/3.png" class="rounded h-75" alt="...">
                             </label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                        <div class="custom-control custom-radio custom-control-inline col-md-5">
                             <input value="4" type="radio" id="radio{{@index}}-4" name="q_{{inc @index}}"
                                 class="custom-control-input">
                             <label class="custom-control-label" for="radio{{@index}}-4">
                                 <img src="/images/4.png" class="rounded h-75" alt="...">
                             </label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                        <div class="custom-control custom-radio custom-control-inline col-md-5">
                             <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
                                 class="custom-control-input">
                             <label class="custom-control-label" for="radio{{@index}}-5">
                                 <img src="/images/5.png" class="rounded h-75" alt="...">
                             </label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                        <div class="custom-control custom-radio custom-control-inline col-md-5">
                             <input value="6" type="radio" id="radio{{@index}}-6" name="q_{{inc @index}}"
                                 class="custom-control-input">
                             <label class="custom-control-label" for="radio{{@index}}-6">
                                 <img src="/images/6.png" class="rounded h-75" alt="...">
                             </label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
+                        <div class="custom-control custom-radio custom-control-inline col-md-5">
                             <input value="7" type="radio" id="radio{{@index}}-7" name="q_{{inc @index}}"
                                 class="custom-control-input">
                             <label class="custom-control-label" for="radio{{@index}}-7">
@@ -516,7 +567,7 @@
 
 <script>
 
-    let PLAYLIST_MAX = 10
+    let PLAYLIST_MAX = 2
 
     function showTrackById(trackId) {
         recommendationArray[arrayIndex].track_id = trackId
@@ -530,6 +581,7 @@
                 $("#img").attr("src", response.album.images[0].url);
                 $("#player").html('')
                 $("#player").html("<audio controls src=" + response.preview_url + " class='embed-responsive-item'>  <source> </audio>")
+                $("#trackId").text(response.id)
                 $("#trackName").text(response.name)
                 $("#artistName").text(response.artists[0].name)
                 $("#step1").show();
@@ -574,8 +626,8 @@
     }
     let recommendationArray = haveBeen ? JSON.parse(getCookie('recommendationArray_' + songId)) : [] // data for sending to server by using jQuery POST
     let arrayIndex = haveBeen ? getCookie('arrayIndex_' + songId) : 0 // index for pushing to recommendationArray
-    //let currentStep = haveBeen ? getCookie('currentStep_' + songId) : 0
-    let currentStep = 4
+    let currentStep = haveBeen ? getCookie('currentStep_' + songId) : 0
+    // let currentStep = 4
     let startRandomFrom = haveBeen ? getCookie('startRandomFrom_' + songId) : ""
     let yesAnswerCount = haveBeen ? getCookie('yesAnswerCount_' + songId) : 0
     let noAnswerCount = haveBeen ? getCookie('noAnswerCount_' + songId) : 0
@@ -610,6 +662,7 @@
                 $("#img").attr("src", response.album.images[0].url);
                 $("#player").html('')
                 $("#player").html("<audio controls src=" + response.preview_url + " class='embed-responsive-item'>  <source> </audio>")
+                $("#trackId").text(response.id)
                 $("#trackName").text(response.name)
                 $("#artistName").text(response.artists[0].name)
                 for (let index = 0; index < 4; index++) {
@@ -683,6 +736,7 @@
                 }
                 if (playlist.length == PLAYLIST_MAX) {
                     $("#nextStep3").html('Do surveys');
+                    $("#addUserPlaylist").show();
                 }
                 $("#playlist").show();
                 $("#step3").show();
@@ -952,11 +1006,15 @@
 
         if (playlist.length == PLAYLIST_MAX) {
             $("#nextStep3").html('Do surveys');
+            $("#addUserPlaylist").show();
         }
         $("#loading").hide();
         $("#playlist").show();
         $("#step3").show();
         currentStep++
+
+        recommendationArray[arrayIndex].endTime = new Date().getTime()
+        postRecommendationData(arrayIndex) // send current recommendation data to server
     }
 
     function showGroupMembers() {
@@ -1019,8 +1077,6 @@
         }
         else if (currentStep == 3) {
             hideAllSteps() // hide every step first
-            recommendationArray[arrayIndex].endTime = new Date().getTime()
-            postRecommendationData(arrayIndex) // send current recommendation data to server
             arrayIndex++ // move cursor to next song index
             recommendationArray[arrayIndex] = {} // initialize song recommendation object
             if (playlist.length >= PLAYLIST_MAX) {
@@ -1141,6 +1197,84 @@
             </div>
         </div>
         <div class="lead">${text}</div>`
+    }
+
+    function showSavePlaylist() {
+        $("#saveButton").removeClass("btn-secondary").addClass("btn-success");
+        $("#saveButtonText").html("Save");
+        $("#saveButton").attr("disabled", false);
+        $('#exampleModalCenter').modal('show')
+    }
+
+    function addUserPlaylist() {
+        let playlistName = $("#playlistName")[0].value
+        let playlistDescription = $("#playlistDescription")[0].value
+        let playlistPublic = $("#playlistPublic")[0].value
+        if (playlistName == "") {
+            $("#playlistName").addClass("is-invalid");
+            $.ajax({
+                type: 'POST',
+                url: 'https://api.spotify.com/v1/users/' + user_id + '/playlists',
+                headers: {
+                    'Authorization': 'Bearer ' + access_token
+                },
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    name: playlistName,
+                    description: playlistDescription,
+                    public: playlistPublic == "on" ? true : false
+                }),
+                success: function (response) {
+                    console.log(response)
+                }
+            })
+        }
+        else {
+            $("#saveButton").attr("disabled", true);
+            $("#savePlaylistLoading").show();
+            $.ajax({
+                type: 'POST',
+                url: 'https://api.spotify.com/v1/users/' + user_id + '/playlists',
+                headers: {
+                    'Authorization': 'Bearer ' + access_token
+                },
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    name: playlistName,
+                    description: playlistDescription,
+                    public: playlistPublic == "on" ? true : false
+                }),
+                success: function (response) {
+                    let playlist_Id = response.id
+                    console.log(response)
+                    console.log(response.id)
+
+                    let requestBody = ""
+                    for (let index = 0; index < playlist.length; index++) {
+                        let track_id = "spotify:track:" + playlist[index].trackId
+                        if (index == playlist.length - 1)
+                            requestBody += track_id
+                        else
+                            requestBody += track_id + ","
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: 'https://api.spotify.com/v1/playlists/' + playlist_Id + '/tracks?uris=' + requestBody,
+                        headers: {
+                            'Authorization': 'Bearer ' + access_token
+                        },
+                        contentType: 'application/json',
+                        success: function (response) {
+                            $("#saveButton").attr("disabled", true);
+                            $("#saveButton").removeClass("btn-success").addClass("btn-secondary");
+                            $("#saveButtonText").html("Saved!");
+                            $("#savePlaylistLoading").hide();
+                        }
+                    })
+                }
+            })
+
+        }
     }
 </script>
 
