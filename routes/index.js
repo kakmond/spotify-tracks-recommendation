@@ -109,6 +109,11 @@ router.get('/song/:id', checkToken, function (req, res) {
   });
 })
 
+
+// router.get('/finish', checkToken, function (req, res) {
+//   res.render('finish');
+// })
+
 router.get('/recommendation/:id', checkToken, function (req, res) {
   let randomName = ['James', 'Sathira', 'Micky', 'Steve']
   let surveys = [
@@ -366,7 +371,7 @@ router.post('/surveys/', checkToken, function (req, res) {
   let q_29 = questionObject.q_29
 
   db.query("INSERT INTO surveys (user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29])
-  res.redirect('/tracks')
+  res.render('finish')
 }
 );
 

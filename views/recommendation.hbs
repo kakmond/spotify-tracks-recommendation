@@ -45,7 +45,7 @@
                 </div>
                 <div class="modal-body">
                     <p class="lead">
-                        Please answer all questions.
+                        Please answer all questions:
                         <br>
                         <span id="wariningText" class="text-success">
 
@@ -81,9 +81,8 @@
             </button>
         </div>
     </div>
-
     {{!-- Step1 --}}
-    <div class="pt-2 pb-3 d-flex bd-highlight">
+    <div class="pt-2 pb-3 d-flex">
         <div id="step1" style="display: none" class="p-2 flex-grow-1 bd-highlight">
             <div class="text-center pb-3">
                 <span style="font-size: 38px" class="text-success">
@@ -359,15 +358,196 @@
 
                         </div>
 
-                    <li class="list-group-item">
-                        <button id="nextStep3" onclick="nextStep()" class="btn-block btn-lg btn-outline-primary">Next
-                            Step
-                        </button>
-                    </li>
+                        <div id="nextStep3">
+                            <hr>
+                            <button onclick="nextStep()" class="btn-block btn-lg btn-outline-primary">Next
+                                Step
+                            </button>
+                        </div>
+
+
+                        <div id="doSurvey" style="display:none" class="list-group-item">
+                            <h4 class="alert-heading text-success">Well done!</h4>
+                            <p class="lead text-muted">You successfully added 10 songs to the playlist. Let's do survey
+                            </p>
+                            <button onclick="nextStep()" class="btn-block btn-lg btn-outline-primary">Do survey
+                            </button>
+                        </div>
                 </ul>
             </div>
         </div>
 
+        {{!-- Step4 --}}
+        <div id="step4" class="mt-2 border" style="display: none">
+            <div class="text-center pt-2 px-5">
+                <span style="font-size: 38px" class="lead text-bold text-success">
+                    Survey <span class="text-dark">
+                        Questions</span>
+                </span>
+                <footer align="left" class="lead text-muted">Note: Survey questions
+                </footer>
+            </div>
+            <small class="px-5 text-muted">
+                1 = Disagree strongly,
+                2 = Disagree,
+                3 = Neither agree nor disagree,
+                4 = Agree,
+                5 = Agree strongly
+            </small>
+            <div class="px-5">
+                <hr>
+            </div>
+            <form onsubmit="return validateForm()" name="formQuestion" action="/surveys" method="POST">
+
+
+                <div id="page1Survey" class="px-5">
+                    {{#each (jsonToObj surveys)}}
+                    {{#ifCond @index '<=' 14}}
+                    <span id="questionText_{{inc @index}}" class="text-success lead">
+                        {{inc @index}}. {{this}}
+                    </span>
+                    <div class="pt-2">
+                        <div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input value="1" type="radio" id="radio{{@index}}-1" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-1">1</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-2">
+                                <input value="2" type="radio" id="radio{{@index}}-2" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-2">2</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-2">
+                                <input value="3" type="radio" id="radio{{@index}}-3" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-3">3</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-2">
+                                <input value="4" type="radio" id="radio{{@index}}-4" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-4">4</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-2">
+                                <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-5">5</label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    {{/ifCond}}
+                    {{/each}}
+                </div>
+
+                <div id="page2Survey" style="display:none" class="px-5">
+                    {{#each (jsonToObj surveys)}}
+                    {{#ifCond @index '>' 14}}
+                    {{#ifCond @index '!=' 28}}
+                    <span id="questionText_{{inc @index}}" class="text-success lead">
+                        {{inc @index}}. {{this}}
+                    </span>
+                    <div class="pt-2">
+                        <div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input value="1" type="radio" id="radio{{@index}}-1" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-1">1</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-2">
+                                <input value="2" type="radio" id="radio{{@index}}-2" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-2">2</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-2">
+                                <input value="3" type="radio" id="radio{{@index}}-3" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-3">3</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-2">
+                                <input value="4" type="radio" id="radio{{@index}}-4" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-4">4</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline ml-2">
+                                <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-5">5</label>
+                            </div>
+                        </div>
+                    </div>
+                    {{else}}
+                    <span id="questionText_{{inc @index}}" class="text-success lead">
+                        {{inc @index}}. {{this}}
+                    </span>
+                    <div class="pt-2">
+                        <div>
+                            <div class="custom-control custom-radio custom-control-inline col-md-5 pt-4">
+                                <input value="1" type="radio" id="radio{{@index}}-1" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-1">
+                                    <img src="/images/1.png" class="rounded w-100" alt="...">
+                                </label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline col-md-5 pt-4">
+                                <input value="2" type="radio" id="radio{{@index}}-2" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-2">
+                                    <img src="/images/2.png" class="rounded w-100" alt="...">
+                                </label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline col-md-5 pt-4">
+                                <input value="3" type="radio" id="radio{{@index}}-3" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-3">
+                                    <img src="/images/3.png" class="rounded w-100" alt="...">
+                                </label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline col-md-5 pt-4">
+                                <input value="4" type="radio" id="radio{{@index}}-4" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-4">
+                                    <img src="/images/4.png" class="rounded w-100" alt="...">
+                                </label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline col-md-5 pt-4">
+                                <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-5">
+                                    <img src="/images/5.png" class="rounded w-100" alt="...">
+                                </label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline col-md-5 pt-4">
+                                <input value="6" type="radio" id="radio{{@index}}-6" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-6">
+                                    <img src="/images/6.png" class="rounded w-100" alt="...">
+                                </label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline col-md-5 pt-4">
+                                <input value="7" type="radio" id="radio{{@index}}-7" name="q_{{inc @index}}"
+                                    class="custom-control-input">
+                                <label class="custom-control-label" for="radio{{@index}}-7">
+                                    <img src="/images/7.png" class="rounded w-100" alt="...">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {{/ifCond}}
+                    <hr>
+
+                    {{/ifCond}}
+
+
+                    {{/each}}
+                </div>
+                <button id="page1Button" type="button" onclick="nextPageSurvey()"
+                    class="btn-block btn-lg btn btn-success">Next</button>
+                <button id="page2Button" style="display:none" type="submit"
+                    class="btn-block btn-lg btn btn-success">Finish</button>
+            </form>
+
+        </div>
         {{!-- Playlist --}}
         <div id="playlist" style="display: none" class="p-2 bd-highlight">
             <div class="card" style="width: 20rem;">
@@ -434,129 +614,8 @@
         </div>
     </div>
 
-    {{!-- Step4 --}}
 
-    <div id="step4" class="border shadow" style="display: none">
-        <div class="text-center pt-2 px-5">
-            <span style="font-size: 38px" class="lead text-bold text-success">
-                Survey <span class="text-dark">
-                    Questions</span>
-            </span>
-            <footer align="left" class="lead text-muted">Note: Survey questions
-            </footer>
-        </div>
-        <small class="px-5 text-muted">
-            1 = Disagree strongly,
-            2 = Disagree,
-            3 = Neither agree nor disagree,
-            4 = Agree,
-            5 = Agree strongly
-        </small>
-        <div class="px-5">
-            <hr>
-        </div>
-        <form onsubmit="return validateForm()" name="formQuestion" action="/surveys" method="POST">
-            <div class="px-5">
-                {{#each (jsonToObj surveys)}}
-                {{#ifCond @index '!=' 28}}
-                <span id="questionText_{{inc @index}}" class="text-success lead">
-                    {{inc @index}}. {{this}}
-                </span>
-                <div class="pt-2">
-                    <div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input value="1" type="radio" id="radio{{@index}}-1" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-1">1</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
-                            <input value="2" type="radio" id="radio{{@index}}-2" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-2">2</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
-                            <input value="3" type="radio" id="radio{{@index}}-3" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-3">3</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
-                            <input value="4" type="radio" id="radio{{@index}}-4" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-4">4</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline ml-2">
-                            <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-5">5</label>
-                        </div>
-                    </div>
-                </div>
-                {{else}}
-                <span id="questionText_{{inc @index}}" class="text-success lead">
-                    {{inc @index}}. {{this}}
-                </span>
-                <div class="pt-2">
-                    <div>
-                        <div class="custom-control custom-radio custom-control-inline col-md-5">
-                            <input value="1" type="radio" id="radio{{@index}}-1" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-1">
-                                <img src="/images/1.png" class="rounded h-75" alt="...">
-                            </label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline col-md-5">
-                            <input value="2" type="radio" id="radio{{@index}}-2" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-2">
-                                <img src="/images/2.png" class="rounded h-75" alt="...">
-                            </label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline col-md-5">
-                            <input value="3" type="radio" id="radio{{@index}}-3" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-3">
-                                <img src="/images/3.png" class="rounded h-75" alt="...">
-                            </label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline col-md-5">
-                            <input value="4" type="radio" id="radio{{@index}}-4" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-4">
-                                <img src="/images/4.png" class="rounded h-75" alt="...">
-                            </label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline col-md-5">
-                            <input value="5" type="radio" id="radio{{@index}}-5" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-5">
-                                <img src="/images/5.png" class="rounded h-75" alt="...">
-                            </label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline col-md-5">
-                            <input value="6" type="radio" id="radio{{@index}}-6" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-6">
-                                <img src="/images/6.png" class="rounded h-75" alt="...">
-                            </label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline col-md-5">
-                            <input value="7" type="radio" id="radio{{@index}}-7" name="q_{{inc @index}}"
-                                class="custom-control-input">
-                            <label class="custom-control-label" for="radio{{@index}}-7">
-                                <img src="/images/7.png" class="rounded h-75" alt="...">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                {{/ifCond}}
 
-                <hr>
-                {{/each}}
-            </div>
-            <button id="nextStep4" type="submit" class="btn-block btn-lg btn btn-success">Finish</button>
-        </form>
-
-    </div>
 </div>
 
 {{!-- Loading --}}
@@ -567,9 +626,10 @@
 
 <script>
 
-    let PLAYLIST_MAX = 10
+    let PLAYLIST_MAX = 1
 
     function showTrackById(trackId) {
+        $("#playlist").show();
         recommendationArray[arrayIndex].track_id = trackId
         recommendationArray[arrayIndex].user_id = user_id
         $.ajax({
@@ -735,7 +795,8 @@
                     $("#yourAnswerBtn").html(noButtonHTML(true));
                 }
                 if (playlist.length == PLAYLIST_MAX) {
-                    $("#nextStep3").html('Do surveys');
+                    $("#nextStep3").hide()
+                    $("#doSurvey").show()
                     $("#addUserPlaylist").show();
                 }
                 $("#playlist").show();
@@ -746,7 +807,10 @@
     }
     else if (currentStep == 4) {
         hideAllSteps() // hide every step first
+        $("#playlist").show();
         $("#step4").show();
+        $("#addUserPlaylist").show();
+
     }
 
 
@@ -773,57 +837,45 @@
     }
 
     function isCompletedStep1() {
-        let answerCount = 0
-        if ($("#songYes").hasClass("active")) {
-            answerCount++
+        let isValid = true
+        let errors = []
+        if (!$("#songYes").hasClass("active") && !$("#songNo").hasClass("active")) {
+            errors.push("Do you know this song?")
+            isValid = false
         }
-        if ($("#songNo").hasClass("active")) {
-            answerCount++
+        if (!$("#artistYes").hasClass("active") && !$("#artistNo").hasClass("active")) {
+            errors.push("Do you know this artist?")
+            isValid = false
         }
-        if ($("#artistYes").hasClass("active")) {
-            answerCount++
+        if (!$("#answer1").hasClass("active") &&
+            !$("#answer2").hasClass("active") &&
+            !$("#answer3").hasClass("active") &&
+            !$("#answer4").hasClass("active")) {
+            errors.push("Would you like this song to be added to the playlist?")
+            isValid = false
         }
-        if ($("#artistNo").hasClass("active")) {
-            answerCount++
-        }
-        if ($("#answer1").hasClass("active")) {
-            answerCount++
-        }
-        if ($("#answer2").hasClass("active")) {
-            answerCount++
-        }
-        if ($("#answer3").hasClass("active")) {
-            answerCount++
-        }
-        if ($("#answer4").hasClass("active")) {
-            answerCount++
-        }
-        if (answerCount == 3) {
+        if (isValid)
             return true
-        }
         else {
+            $("#wariningText").html(errors.join('<br>'))
             return false
         }
     }
 
     function isCompletedStep2() {
-        let answerCount = 0
-        if ($("#repeatAnswer1").hasClass("active")) {
-            answerCount++
+        let isValid = true
+        let errors = []
+        if (!$("#repeatAnswer1").hasClass("active") &&
+            !$("#repeatAnswer2").hasClass("active") &&
+            !$("#repeatAnswer3").hasClass("active") &&
+            !$("#repeatAnswer4").hasClass("active")) {
+            errors.push("Would you like this song to be added to the playlist?")
+            isValid = false
         }
-        if ($("#repeatAnswer2").hasClass("active")) {
-            answerCount++
-        }
-        if ($("#repeatAnswer3").hasClass("active")) {
-            answerCount++
-        }
-        if ($("#repeatAnswer4").hasClass("active")) {
-            answerCount++
-        }
-        if (answerCount == 1) {
+        if (isValid)
             return true
-        }
         else {
+            $("#wariningText").html(errors.join('<br>'))
             return false
         }
     }
@@ -1005,7 +1057,8 @@
         }
 
         if (playlist.length == PLAYLIST_MAX) {
-            $("#nextStep3").html('Do surveys');
+            $("#nextStep3").hide()
+            $("#doSurvey").show()
             $("#addUserPlaylist").show();
         }
         $("#loading").hide();
@@ -1083,6 +1136,8 @@
                 // do the survey
                 hideAllSteps() // hide every step first
                 currentStep = 4
+                $("#playlist").show();
+                $("#addUserPlaylist").show();
                 $("#step4").show();
             } else {
                 recommendationArray[arrayIndex].startTime = new Date().getTime()
@@ -1275,6 +1330,32 @@
             })
 
         }
+    }
+
+    function nextPageSurvey() {
+        let forms = []
+        let isValid = true
+        let errors = []
+        for (let questionIndex = 1; questionIndex <= 15; questionIndex++) {
+            if (document.forms["formQuestion"]["q_" + questionIndex].value == "") {
+                let questionText = $("#questionText_" + questionIndex).text()
+                errors.push(questionText)
+                isValid = false
+            }
+        }
+        if (!isValid) {
+            $("#wariningText").html(errors.join('<br>'))
+            $('#alertModel').modal('show')
+            return false
+        }
+        else {
+            $("#page1Survey").hide()
+            $("#page2Survey").show()
+            $("#page1Button").hide()
+            $("#page2Button").show()
+        }
+
+
     }
 </script>
 
