@@ -115,7 +115,7 @@ router.get('/song/:id', checkToken, function (req, res) {
 // })
 
 router.get('/recommendation/:id', checkToken, function (req, res) {
-  let randomName = ['James', 'Sathira', 'Micky', 'Steve']
+  let randomName = ['James', 'Sara', 'Emma', 'Steve']
   let surveys = [
     "I spend a lot of my free time doing music-related activities.",
     "I enjoy writing about music, for example on blogs and forums.",
