@@ -384,7 +384,18 @@
                     Survey <span class="text-dark">
                         Questions</span>
                 </span>
-                <footer align="left" class="lead text-muted">Note: Survey questions
+
+                <footer align="left" class="text-muted">
+                    <span class="lead text-muted">
+                        Click here to save the playlist to your Spotify account:
+                    </span>
+                    <button class="mt-3 btn-outline-success" onclick="showSavePlaylist()">Save playlist
+                    </button>
+                    <br>
+                    <span class="lead">
+                        Note: Survey questions
+                    </span>
+
                 </footer>
             </div>
             <small class="px-5 text-muted">
@@ -398,8 +409,6 @@
                 <hr>
             </div>
             <form onsubmit="return validateForm()" name="formQuestion" action="/surveys" method="POST">
-
-
                 <div id="page1Survey" class="px-5">
                     {{#each (jsonToObj surveys)}}
                     {{#ifCond @index '<=' 14}}
@@ -626,7 +635,7 @@
 
 <script>
 
-    let PLAYLIST_MAX = 1
+    let PLAYLIST_MAX = 10
 
     function showTrackById(trackId) {
         $("#playlist").show();
