@@ -32,7 +32,7 @@
 </script>
 
 <div class="container">
-    <!-- Modal -->
+    <!-- Error Modal -->
     <div class="modal fade" id="alertModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
@@ -54,6 +54,70 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description 1 Modal -->
+    <div class="modal fade" id="alertDescription1" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Description</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">
+                        <span class="text-muted">
+                            Below you will find a candidate song for the playlist. This
+                            song is chosen based on your reference song that you chose before and the fitness with your
+                            fellow
+                            group members. Indicate for the song below to what extent you would like to have this song
+                            added to
+                            the playlist. Responses of you and your group members will be initially shown
+                            <b><u>anonymously</u></b> in the next step.
+                        </span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Got it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description 2 Modal -->
+    <div class="modal fade" id="alertDescription2" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Description</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">
+                        <span class="text-muted">
+                            The initial responses of your group members are shown
+                            here. In this stage the names of <b><u>all</u></b> group members are anonymized. You are
+                            allowed
+                            to
+                            change your opinion on this song for the playlist. The names and responses of all group
+                            members
+                            will be revealed when the final decision has been made in the next step.
+                            <br>
+                            <b>Remember that an unanimous positive (i.e., "yes" or "maybe yes") decision need to be
+                                reached
+                                before a song will be added to the playlist.</b>
+                        </span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Got it!</button>
                 </div>
             </div>
         </div>
@@ -89,12 +153,12 @@
                     Candidate <span style="font-size: 38px" class="lead text-dark">
                         Song</span>
                 </span>
-                <footer align="left" class="lead text-muted">Below you will find a candidate song for the playlist. This
+                {{!-- <footer align="left" class="lead text-muted">Below you will find a candidate song for the playlist. This
                     song is chosen based on your reference song that you chose before and the fitness with your fellow
                     group members. Indicate for the song below to what extent you would like to have this song added to
                     the playlist. Responses of you and your group members will be initially shown
                     <b><u>anonymously</u></b> in the next step.
-                </footer>
+                </footer> --}}
             </div>
             <div>
                 <div class="card">
@@ -225,7 +289,7 @@
                         Anonymous <span style="font-size: 38px" class="lead text-dark">
                             Group Responses</span>
                     </span>
-                    <footer align="left" class="lead text-muted">The initial responses of your group members are shown
+                    {{!-- <footer align="left" class="lead text-muted">The initial responses of your group members are shown
                         here. In this stage the names of <b><u>all</u></b> group members are anonymized. You are allowed
                         to
                         change your opinion on this song for the playlist. The names and responses of all group members
@@ -233,7 +297,7 @@
                         <br>
                         <b>Remember that an unanimous positive (i.e., "yes" or "maybe yes") decision need to be reached
                             before a song will be added to the playlist.</b>
-                    </footer>
+                    </footer> --}}
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -654,6 +718,9 @@
                 $("#trackName").text(response.name)
                 $("#artistName").text(response.artists[0].name)
                 $("#step1").show();
+                if (arrayIndex == 0) {
+                    $('#alertDescription1').modal('show')
+                }
                 // remove all active buttons
                 $("#artistYes").removeClass("active");
                 $("#artistNo").removeClass("active");
@@ -751,6 +818,9 @@
                 }
                 $("#playlist").show();
                 $("#step2").show();
+                if (arrayIndex == 0) {
+                    $('#alertDescription2').modal('show')
+                }
             }
         })
     }
@@ -1001,6 +1071,9 @@
         $("#loading").hide();
         $("#playlist").show();
         $("#step2").show();
+        if (arrayIndex == 0) {
+            $('#alertDescription2').modal('show')
+        }
         currentStep++
     }
 
