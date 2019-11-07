@@ -124,7 +124,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
     "I am able to hit the right notes when I sing along with a recording.",
     "I can compare and discuss differences between two performances or versions of the same piece of music.",
     "I have never been complimented for my talents as a musical performer.",
-    "I often read or search the internet for things related to music.",
+    "I often read or search the Internet for things related to music.",
     "I am not able to sing in harmony when somebody is singing a familiar tune.",
     "I am able to identify what is special about a given musical piece.",
     "When I sing, I have no idea whether I'm in tune or not.",
