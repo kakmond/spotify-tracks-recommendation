@@ -6,8 +6,8 @@ var querystring = require('querystring');
 
 var client_id = 'effb4e77d8764a29a23dc735f6f11dfa'; // Your client id
 var client_secret = 'ef52e8965b47466e812d2d3ce761e582'; // Your secret
-var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
-// var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+// var redirect_uri = 'https://spotify-group.herokuapp.com/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 
 var mysql = require('mysql');
 var db = mysql.createConnection({
@@ -26,7 +26,7 @@ db.query("CREATE TABLE IF NOT EXISTS popularity25 (user_id VARCHAR(36), track_id
 db.query("CREATE TABLE IF NOT EXISTS popularity75 (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS recommendation (user_id VARCHAR(36), track_id TEXT, list INTEGER, know_song INTEGER, know_artist INTEGER, answer_a INTEGER, waiting_a INTEGER, bot0_a INTEGER, bot1_a INTEGER, bot2_a INTEGER, bot3_a INTEGER, answer_b INTEGER, waiting_b INTEGER, bot0_b INTEGER, bot1_b INTEGER, bot2_b INTEGER, bot3_b INTEGER, startTime BIGINT, endTime BIGINT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS questions (user_id VARCHAR(36), age INTEGER, gender TEXT, home_country TEXT, like_country TEXT, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, q_16 INTEGER, q_17 INTEGER, q_18 INTEGER, q_19 INTEGER, q_20 INTEGER, q_21 INTEGER, q_22 INTEGER, q_23 INTEGER, q_24 INTEGER, q_25 INTEGER, q_26 INTEGER, q_27 INTEGER, q_28 INTEGER, q_29 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, q_16 INTEGER, q_17 INTEGER, q_18 INTEGER, q_19 INTEGER, q_20 INTEGER, q_21 INTEGER, q_22 INTEGER, q_23 INTEGER, q_24 INTEGER, q_25 INTEGER, q_26 INTEGER, q_27 INTEGER, q_28 INTEGER, q_29 INTEGER, q_30 INTEGER, q_31s INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 
 /**
  * Generates a random string containing numbers and letters
@@ -83,7 +83,7 @@ function recommendationOptions(access_token, trackId, popularity) {
       querystring.stringify({
         seed_tracks: trackId,
         target_popularity: popularity,
-        market: 'SE'
+        market: 'from_token'
       }),
     headers: { 'Authorization': 'Bearer ' + access_token },
     json: true
@@ -125,14 +125,15 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
     "I can compare and discuss differences between two performances or versions of the same piece of music.",
     "I have never been complimented for my talents as a musical performer.",
     "I often read or search the internet for things related to music.",
+    "Please answer this question with “Disagree“",
     "I am not able to sing in harmony when somebody is singing a familiar tune.",
     "I am able to identify what is special about a given musical piece.",
     "When I sing, I have no idea whether I'm in tune or not.",
     "Music is kind of an addiction for me - I couldn't live without it.",
     "I don’t like singing in public because I’m afraid that I would sing wrong notes.",
     "I would not consider myself a musician.",
-    // new questions
     "After hearing a new song two or three times, I can usually sing it by myself.",
+    // questions on page 2
     "I am satisfied with the songs that are in the playlist.",
     "The songs in the playlist match my preferences",
     "The songs in the playlist meet my needs.",
@@ -140,6 +141,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
     "I would give the songs in the playlist a high rating.",
     "The playlist could become one of my favorites",
     "I would recommend this playlist to others",
+    "Please answer this question with “Agree”",
     "I think I would enjoy listening to the playlist",
     "I am satisfied with the playlist",
     "It was difficult to make a final decision on a song",
@@ -369,8 +371,10 @@ router.post('/surveys/', checkToken, function (req, res) {
   let q_27 = questionObject.q_27
   let q_28 = questionObject.q_28
   let q_29 = questionObject.q_29
+  let q_30 = questionObject.q_30
+  let q_31 = questionObject.q_31
 
-  db.query("INSERT INTO surveys (user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29])
+  db.query("INSERT INTO surveys (user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31])
   res.render('finish')
 }
 );

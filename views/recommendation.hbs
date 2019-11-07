@@ -475,7 +475,7 @@
             <form onsubmit="return validateForm()" name="formQuestion" action="/surveys" method="POST">
                 <div id="page1Survey" class="px-5">
                     {{#each (jsonToObj surveys)}}
-                    {{#ifCond @index '<=' 14}}
+                    {{#ifCond @index '<=' 15}}
                     <span id="questionText_{{inc @index}}" class="text-success lead">
                         {{inc @index}}. {{this}}
                     </span>
@@ -515,8 +515,8 @@
 
                 <div id="page2Survey" style="display:none" class="px-5">
                     {{#each (jsonToObj surveys)}}
-                    {{#ifCond @index '>' 14}}
-                    {{#ifCond @index '!=' 28}}
+                    {{#ifCond @index '>' 15}}
+                    {{#ifCond @index '!=' 30}}
                     <span id="questionText_{{inc @index}}" class="text-success lead">
                         {{inc @index}}. {{this}}
                     </span>
@@ -763,7 +763,7 @@
     let recommendationArray = haveBeen ? JSON.parse(getCookie('recommendationArray_' + songId)) : [] // data for sending to server by using jQuery POST
     let arrayIndex = haveBeen ? getCookie('arrayIndex_' + songId) : 0 // index for pushing to recommendationArray
     let currentStep = haveBeen ? getCookie('currentStep_' + songId) : 0
-    // let currentStep = 4
+    //let currentStep = 4
     let startRandomFrom = haveBeen ? getCookie('startRandomFrom_' + songId) : ""
     let yesAnswerCount = haveBeen ? getCookie('yesAnswerCount_' + songId) : 0
     let noAnswerCount = haveBeen ? getCookie('noAnswerCount_' + songId) : 0
@@ -1257,7 +1257,7 @@
         let forms = []
         let isValid = true
         let errors = []
-        for (let questionIndex = 1; questionIndex <= 29; questionIndex++) {
+        for (let questionIndex = 1; questionIndex <= 31; questionIndex++) {
             if (document.forms["formQuestion"]["q_" + questionIndex].value == "") {
                 let questionText = $("#questionText_" + questionIndex).text()
                 errors.push(questionText)
@@ -1418,7 +1418,7 @@
         let forms = []
         let isValid = true
         let errors = []
-        for (let questionIndex = 1; questionIndex <= 15; questionIndex++) {
+        for (let questionIndex = 1; questionIndex <= 16; questionIndex++) {
             if (document.forms["formQuestion"]["q_" + questionIndex].value == "") {
                 let questionText = $("#questionText_" + questionIndex).text()
                 errors.push(questionText)
@@ -1436,8 +1436,6 @@
             $("#page1Button").hide()
             $("#page2Button").show()
         }
-
-
     }
 </script>
 
