@@ -83,7 +83,7 @@ function recommendationOptions(access_token, trackId, popularity) {
       querystring.stringify({
         seed_tracks: trackId,
         target_popularity: popularity,
-        market: 'from_token'
+        market: "from_token"
       }),
     headers: { 'Authorization': 'Bearer ' + access_token },
     json: true
@@ -166,8 +166,10 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
       if (popularity25body.tracks) {
         for (let index = 0; index < popularity25body.tracks.length; index++) {
           if (popularity25body.tracks[index]) {
-            db.query("REPLACE INTO popularity25 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity])
-            randomTracks25.push(popularity25body.tracks[index].id)
+            if (popularity25body.tracks[index].is_playable) {
+              db.query("REPLACE INTO popularity25 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity])
+              randomTracks25.push(popularity25body.tracks[index].id)
+            }
           }
         }
       }
@@ -176,8 +178,10 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
         if (popularity75body.tracks) {
           for (let index = 0; index < popularity75body.tracks.length; index++) {
             if (popularity75body.tracks[index]) {
-              db.query("REPLACE INTO popularity75 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
-              randomTracks75.push(popularity75body.tracks[index].id)
+              if (popularity75body.tracks[index].is_playable) {
+                db.query("REPLACE INTO popularity75 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
+                randomTracks75.push(popularity75body.tracks[index].id)
+              }
             }
           }
         }
