@@ -503,7 +503,8 @@
             <div class="px-5">
                 <hr>
             </div>
-            <form onsubmit="return validateForm()" name="formQuestion" action="/surveys" method="POST">
+            <form onsubmit="return validateForm()" name="formQuestion" action="/surveys/{{recommendation_id}}"
+                method="POST">
                 <div id="page1Survey" class="px-5">
                     {{#each (jsonToObj surveys)}}
                     {{#ifCond @index '<=' 15}}

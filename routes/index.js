@@ -26,7 +26,7 @@ db.query("CREATE TABLE IF NOT EXISTS popularity25 (user_id VARCHAR(36), track_id
 db.query("CREATE TABLE IF NOT EXISTS popularity75 (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS recommendation (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, list INTEGER, know_song INTEGER, know_artist INTEGER, answer_a INTEGER, waiting_a INTEGER, bot0_a INTEGER, bot1_a INTEGER, bot2_a INTEGER, bot3_a INTEGER, answer_b INTEGER, waiting_b INTEGER, bot0_b INTEGER, bot1_b INTEGER, bot2_b INTEGER, bot3_b INTEGER, startTime BIGINT, endTime BIGINT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS questions (user_id VARCHAR(36), age INTEGER, gender TEXT, home_country TEXT, like_country TEXT, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, q_16 INTEGER, q_17 INTEGER, q_18 INTEGER, q_19 INTEGER, q_20 INTEGER, q_21 INTEGER, q_22 INTEGER, q_23 INTEGER, q_24 INTEGER, q_25 INTEGER, q_26 INTEGER, q_27 INTEGER, q_28 INTEGER, q_29 INTEGER, q_30 INTEGER, q_31 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), recommendation_id TEXT, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, q_16 INTEGER, q_17 INTEGER, q_18 INTEGER, q_19 INTEGER, q_20 INTEGER, q_21 INTEGER, q_22 INTEGER, q_23 INTEGER, q_24 INTEGER, q_25 INTEGER, q_26 INTEGER, q_27 INTEGER, q_28 INTEGER, q_29 INTEGER, q_30 INTEGER, q_31 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS playlist (user_id VARCHAR(36), track_id TEXT, visibility TEXT, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS complete (user_id VARCHAR(36), recommendation_id TEXT, isCompleted BOOLEAN, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 
@@ -169,7 +169,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
         for (let index = 0; index < popularity25body.tracks.length; index++) {
           if (popularity25body.tracks[index]) {
             if (popularity25body.tracks[index].preview_url) {
-              db.query("REPLACE INTO popularity25 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity])
+              db.query("REPLACE INTO popularity25 (user_id, recommendation_id, track_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity])
               randomTracks25.push(popularity25body.tracks[index].id)
             }
           }
@@ -181,14 +181,14 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
           for (let index = 0; index < popularity75body.tracks.length; index++) {
             if (popularity75body.tracks[index]) {
               if (popularity75body.tracks[index].preview_url) {
-                db.query("REPLACE INTO popularity75 (user_id, track_id, recommendation_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
+                db.query("REPLACE INTO popularity75 (user_id, recommendation_id, track_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
                 randomTracks75.push(popularity75body.tracks[index].id)
               }
             }
           }
         }
         console.log(randomTracks25)
-        res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75), users: JSON.stringify(randomName), surveys: JSON.stringify(surveys) });
+        res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75), users: JSON.stringify(randomName), surveys: JSON.stringify(surveys), recommendation_id: trackId });
       });
     });
   });
@@ -347,9 +347,10 @@ router.post('/questions/', checkToken, function (req, res) {
 }
 );
 
-router.post('/surveys/', checkToken, function (req, res) {
+router.post('/surveys/:id', checkToken, function (req, res) {
   let user_id = req.cookies.user_id;
   let questionObject = req.body
+  let recommendation_id = req.params.id
   let q_1 = questionObject.q_1
   let q_2 = questionObject.q_2
   let q_3 = questionObject.q_3
@@ -382,7 +383,7 @@ router.post('/surveys/', checkToken, function (req, res) {
   let q_30 = questionObject.q_30
   let q_31 = questionObject.q_31
 
-  db.query("INSERT INTO surveys (user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31])
+  db.query("INSERT INTO surveys (user_id, recommendation_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, recommendation_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31])
   res.render('finish')
 }
 );
