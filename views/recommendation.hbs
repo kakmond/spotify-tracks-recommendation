@@ -123,6 +123,31 @@
         </div>
     </div>
 
+    <!-- No song Modal -->
+    <div class="modal fade" id="alertNoSong" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Ooops!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">
+                        <span class="text-muted">
+                            Unfortunately there are no more songs available for the playlist.
+                            We will now proceed with a short survey
+                        </span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Got it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- group member -->
     <div id="step0" style="display: none">
         <div class="text-center py-3">
@@ -1169,13 +1194,11 @@
             // generate a random boolean, [0, 0.5) is starting from randomTracks25, [0.5, 1) is starting from randomTracks75.
             let random = Math.random();
             if (random >= 0.5) {
-                console.log(75)
                 startRandomFrom = '75'
                 randomTrackId = randomTracks75.pop()
                 recommendationArray[arrayIndex].list = 75
             }
             else {
-                console.log(25)
                 startRandomFrom = '25'
                 randomTrackId = randomTracks25.pop()
                 recommendationArray[arrayIndex].list = 25
@@ -1222,14 +1245,56 @@
             recommendationArray[arrayIndex] = {} // initialize song recommendation object
             if (playlist.length >= PLAYLIST_MAX) {
                 // do the survey
+                let url = window.location.href.split('/')
+                let songId = url[url.length - 1]
+                let completeObject = {}
+                completeObject.recommendation_id = songId
+                completeObject.isCompleted = playlist.length == PLAYLIST_MAX ? true : false
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(completeObject),
+                    contentType: 'application/json',
+                    url: '/complete'
+                });
                 hideAllSteps() // hide every step first
                 currentStep = 4
                 $("#playlist").show();
                 $("#addUserPlaylist").show();
                 $("#step4").show();
             } else {
-                recommendationArray[arrayIndex].startTime = new Date().getTime()
-                if (startRandomFrom == '25') {
+                if (randomTracks75.length <= 0 && randomTracks25.length <= 0) {
+                    // no song available
+                    // do the survey
+                    let url = window.location.href.split('/')
+                    let songId = url[url.length - 1]
+                    let completeObject = {}
+                    completeObject.recommendation_id = songId
+                    completeObject.isCompleted = playlist.length == PLAYLIST_MAX ? true : false
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(completeObject),
+                        contentType: 'application/json',
+                        url: '/complete'
+                    });
+                    hideAllSteps() // hide every step first
+                    currentStep = 4
+                    $("#playlist").show();
+                    $("#addUserPlaylist").show();
+                    $("#step4").show();
+                    $('#alertNoSong').modal('show')
+                }
+                else if (randomTracks75.length <= 0) {
+                    recommendationArray[arrayIndex].startTime = new Date().getTime()
+                    recommendationArray[arrayIndex].list = 75
+                    showTrackById(randomTracks25.pop())
+                }
+                else if (randomTracks25.length <= 0) {
+                    recommendationArray[arrayIndex].startTime = new Date().getTime()
+                    recommendationArray[arrayIndex].list = 25
+                    showTrackById(randomTracks25.pop())
+                }
+                else if (startRandomFrom == '25') {
+                    recommendationArray[arrayIndex].startTime = new Date().getTime()
                     if (noAnswerCount >= 5) {
                         recommendationArray[arrayIndex].list = 75
                         noAnswerCount = 0
@@ -1243,6 +1308,7 @@
                     }
                 }
                 else {
+                    recommendationArray[arrayIndex].startTime = new Date().getTime()
                     if (yesAnswerCount >= 5) {
                         recommendationArray[arrayIndex].list = 25
                         noAnswerCount = 0
@@ -1290,6 +1356,9 @@
     }
 
     function postRecommendationData(index) {
+        let url = window.location.href.split('/')
+        let songId = url[url.length - 1]
+        recommendationArray[index].recommendation_id = songId
         $.ajax({
             type: 'POST',
             data: JSON.stringify(recommendationArray[index]),
@@ -1355,22 +1424,6 @@
         let playlistPublic = $("#playlistPublic")[0].value
         if (playlistName == "") {
             $("#playlistName").addClass("is-invalid");
-            $.ajax({
-                type: 'POST',
-                url: 'https://api.spotify.com/v1/users/' + user_id + '/playlists',
-                headers: {
-                    'Authorization': 'Bearer ' + access_token
-                },
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    name: playlistName,
-                    description: playlistDescription,
-                    public: playlistPublic == "on" ? true : false
-                }),
-                success: function (response) {
-                    console.log(response)
-                }
-            })
         }
         else {
             $("#saveButton").attr("disabled", true);
@@ -1389,9 +1442,6 @@
                 }),
                 success: function (response) {
                     let playlist_Id = response.id
-                    console.log(response)
-                    console.log(response.id)
-
                     let requestBody = ""
                     for (let index = 0; index < playlist.length; index++) {
                         let track_id = "spotify:track:" + playlist[index].trackId
@@ -1412,6 +1462,23 @@
                             $("#saveButton").removeClass("btn-success").addClass("btn-secondary");
                             $("#saveButtonText").html("Saved!");
                             $("#savePlaylistLoading").hide();
+                            let playlistObject = {}
+                            playlistObject.user_id = user_id
+                            let url = window.location.href.split('/')
+                            let songId = url[url.length - 1]
+                            playlistObject.track_id = songId
+                            playlistObject.visibility = playlistPublic == "on" ? true : false
+
+                            for (let index = 0; index < playlist.length; index++) {
+                                let track_id = playlist[index].trackId
+                                playlistObject["track_" + (index + 1)] = track_id
+                            }
+                            $.ajax({
+                                type: 'POST',
+                                data: JSON.stringify(playlistObject),
+                                contentType: 'application/json',
+                                url: '/playlist'
+                            });
                         }
                     })
                 }

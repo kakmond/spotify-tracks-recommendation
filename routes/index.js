@@ -24,9 +24,11 @@ db.query("CREATE TABLE IF NOT EXISTS user (user_id VARCHAR(36) PRIMARY KEY, coun
 db.query("CREATE TABLE IF NOT EXISTS track (user_id VARCHAR(36) PRIMARY KEY, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS popularity25 (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS popularity75 (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS recommendation (user_id VARCHAR(36), track_id TEXT, list INTEGER, know_song INTEGER, know_artist INTEGER, answer_a INTEGER, waiting_a INTEGER, bot0_a INTEGER, bot1_a INTEGER, bot2_a INTEGER, bot3_a INTEGER, answer_b INTEGER, waiting_b INTEGER, bot0_b INTEGER, bot1_b INTEGER, bot2_b INTEGER, bot3_b INTEGER, startTime BIGINT, endTime BIGINT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS recommendation (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, list INTEGER, know_song INTEGER, know_artist INTEGER, answer_a INTEGER, waiting_a INTEGER, bot0_a INTEGER, bot1_a INTEGER, bot2_a INTEGER, bot3_a INTEGER, answer_b INTEGER, waiting_b INTEGER, bot0_b INTEGER, bot1_b INTEGER, bot2_b INTEGER, bot3_b INTEGER, startTime BIGINT, endTime BIGINT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS questions (user_id VARCHAR(36), age INTEGER, gender TEXT, home_country TEXT, like_country TEXT, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
-db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, q_16 INTEGER, q_17 INTEGER, q_18 INTEGER, q_19 INTEGER, q_20 INTEGER, q_21 INTEGER, q_22 INTEGER, q_23 INTEGER, q_24 INTEGER, q_25 INTEGER, q_26 INTEGER, q_27 INTEGER, q_28 INTEGER, q_29 INTEGER, q_30 INTEGER, q_31s INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, q_16 INTEGER, q_17 INTEGER, q_18 INTEGER, q_19 INTEGER, q_20 INTEGER, q_21 INTEGER, q_22 INTEGER, q_23 INTEGER, q_24 INTEGER, q_25 INTEGER, q_26 INTEGER, q_27 INTEGER, q_28 INTEGER, q_29 INTEGER, q_30 INTEGER, q_31 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS playlist (user_id VARCHAR(36), track_id TEXT, visibility TEXT, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS complete (user_id VARCHAR(36), recommendation_id TEXT, isCompleted BOOLEAN, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 
 /**
  * Generates a random string containing numbers and letters
@@ -185,6 +187,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
             }
           }
         }
+        console.log(randomTracks25)
         res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75), users: JSON.stringify(randomName), surveys: JSON.stringify(surveys) });
       });
     });
@@ -300,7 +303,8 @@ router.post('/recommendation/', checkToken, function (req, res) {
   let bot3_b = recommendationObject.bot3_b
   let startTime = recommendationObject.startTime
   let endTime = recommendationObject.endTime
-  db.query("INSERT INTO recommendation (user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b, startTime, endTime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, track_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b, startTime, endTime])
+  let recommendation_id = recommendationObject.recommendation_id
+  db.query("INSERT INTO recommendation (user_id, track_id, recommendation_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b, startTime, endTime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, track_id, recommendation_id, list, know_song, know_artist, answer_a, waiting_a, bot0_a, bot1_a, bot2_a, bot3_a, answer_b, waiting_b, bot0_b, bot1_b, bot2_b, bot3_b, startTime, endTime])
 }
 );
 
@@ -409,6 +413,36 @@ function hasAnsweredQuestions(req, res, next) {
     }
   })
 }
+
+router.post('/playlist/', checkToken, function (req, res) {
+  let user_id = req.cookies.user_id;
+  let playlistObject = req.body
+  let track_id = playlistObject.track_id
+  let visibility = playlistObject.visibility
+  let track_1 = playlistObject.track_1
+  let track_2 = playlistObject.track_2
+  let track_3 = playlistObject.track_3
+  let track_4 = playlistObject.track_4
+  let track_5 = playlistObject.track_5
+  let track_6 = playlistObject.track_6
+  let track_7 = playlistObject.track_7
+  let track_8 = playlistObject.track_8
+  let track_9 = playlistObject.track_9
+  let track_10 = playlistObject.track_10
+  db.query("INSERT INTO playlist (user_id, track_id, visibility, track_1, track_2, track_3, track_4, track_5, track_6, track_7, track_8, track_9, track_10) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    [user_id, track_id, visibility, track_1, track_2, track_3, track_4, track_5, track_6, track_7, track_8, track_9, track_10])
+}
+);
+
+router.post('/complete/', checkToken, function (req, res) {
+  let user_id = req.cookies.user_id;
+  let completeObject = req.body
+  let recommendation_id = completeObject.recommendation_id
+  let isCompleted = completeObject.isCompleted
+  db.query("INSERT INTO complete (user_id, recommendation_id, isCompleted) VALUES (?,?,?)",
+    [user_id, recommendation_id, isCompleted])
+}
+);
 
 
 module.exports = router;
