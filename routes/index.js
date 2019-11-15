@@ -29,6 +29,7 @@ db.query("CREATE TABLE IF NOT EXISTS questions (user_id VARCHAR(36), age INTEGER
 db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), recommendation_id TEXT, q_1 INTEGER, q_2 INTEGER, q_3 INTEGER, q_4 INTEGER, q_5 INTEGER, q_6 INTEGER, q_7 INTEGER, q_8 INTEGER, q_9 INTEGER, q_10 INTEGER, q_11 INTEGER, q_12 INTEGER, q_13 INTEGER, q_14 INTEGER, q_15 INTEGER, q_16 INTEGER, q_17 INTEGER, q_18 INTEGER, q_19 INTEGER, q_20 INTEGER, q_21 INTEGER, q_22 INTEGER, q_23 INTEGER, q_24 INTEGER, q_25 INTEGER, q_26 INTEGER, q_27 INTEGER, q_28 INTEGER, q_29 INTEGER, q_30 INTEGER, q_31 INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS playlist (user_id VARCHAR(36), track_id TEXT, visibility TEXT, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS complete (user_id VARCHAR(36), recommendation_id TEXT, isCompleted BOOLEAN, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS payments (user_id VARCHAR(36), recommendation_id TEXT, code TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 
 /**
  * Generates a random string containing numbers and letters
@@ -112,87 +113,94 @@ router.get('/song/:id', checkToken, function (req, res) {
 })
 
 
-// router.get('/finish', checkToken, function (req, res) {
-//   res.render('finish');
-// })
-
 router.get('/recommendation/:id', checkToken, function (req, res) {
-  let randomName = ['James', 'Sara', 'Emma', 'Steve']
-  let surveys = [
-    "I spend a lot of my free time doing music-related activities.",
-    "I enjoy writing about music, for example on blogs and forums.",
-    "If somebody starts singing a song I don't know, I can usually join in.",
-    "I can sing or play music from memory.",
-    "I am able to hit the right notes when I sing along with a recording.",
-    "I can compare and discuss differences between two performances or versions of the same piece of music.",
-    "I have never been complimented for my talents as a musical performer.",
-    "I often read or search the internet for things related to music.",
-    "Please answer this question with “Disagree“",
-    "I am not able to sing in harmony when somebody is singing a familiar tune.",
-    "I am able to identify what is special about a given musical piece.",
-    "When I sing, I have no idea whether I'm in tune or not.",
-    "Music is kind of an addiction for me - I couldn't live without it.",
-    "I don’t like singing in public because I’m afraid that I would sing wrong notes.",
-    "I would not consider myself a musician.",
-    "After hearing a new song two or three times, I can usually sing it by myself.",
-    // questions on page 2
-    "I am satisfied with the songs that are in the playlist.",
-    "The songs in the playlist match my preferences",
-    "The songs in the playlist meet my needs.",
-    "I do not like the songs in the playlist",
-    "I would give the songs in the playlist a high rating.",
-    "The playlist could become one of my favorites",
-    "I would recommend this playlist to others",
-    "Please answer this question with “Agree”",
-    "I think I would enjoy listening to the playlist",
-    "I am satisfied with the playlist",
-    "It was difficult to make a final decision on a song",
-    "Working with the group to decide on a song was easy",
-    "I had to make a lot of compromises when deciding on a song",
-    "The group was similar minded when deciding on a song",
-    "Which picture represents your relationship with the group best? The circle around 'X' represents the group, the circle around 'Me' represents you."
-  ]
-  let access_token = req.cookies.access_token;
   let user_id = req.cookies.user_id;
-  // get track's detail
-  request.get(trackOptions(req.params.id, access_token), function (error, response, trackBody) {
-    let trackId = trackBody.id
-    // delete old popularity records if exist
-    db.query("DELETE FROM popularity25 WHERE track_id = ? ", [trackId]);
-    db.query("DELETE FROM popularity75 WHERE track_id = ? ", [trackId]);
-    // get recommendations based on popularity of 25 and 75
-    request.get(recommendationOptions(access_token, trackId, 25), function (error, response, popularity25body) {
-      randomTracks25 = []
-      randomTracks75 = []
-      // store data in popularity25 table
-      if (popularity25body.tracks) {
-        for (let index = 0; index < popularity25body.tracks.length; index++) {
-          if (popularity25body.tracks[index]) {
-            if (popularity25body.tracks[index].preview_url) {
-              db.query("REPLACE INTO popularity25 (user_id, recommendation_id, track_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity])
-              randomTracks25.push(popularity25body.tracks[index].id)
-            }
-          }
-        }
-      }
-      request.get(recommendationOptions(access_token, trackId, 75), function (error, response, popularity75body) {
-        // store data in popularity75 table
-        if (popularity75body.tracks) {
-          for (let index = 0; index < popularity75body.tracks.length; index++) {
-            if (popularity75body.tracks[index]) {
-              if (popularity75body.tracks[index].preview_url) {
-                db.query("REPLACE INTO popularity75 (user_id, recommendation_id, track_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
-                randomTracks75.push(popularity75body.tracks[index].id)
+  const query = `SELECT * FROM payments WHERE user_id = ? AND recommendation_id = ?`
+  const values = [user_id, req.params.id]
+  db.query(query, values, function (error, payment) {
+    if (payment.length > 0) {
+      console.log(payment[0].code)
+      const code = payment[0].code
+      res.render('finish', { code });
+    }
+    else {
+      let randomName = ['James', 'Sara', 'Emma', 'Steve']
+      let surveys = [
+        "I spend a lot of my free time doing music-related activities.",
+        "I enjoy writing about music, for example on blogs and forums.",
+        "If somebody starts singing a song I don't know, I can usually join in.",
+        "I can sing or play music from memory.",
+        "I am able to hit the right notes when I sing along with a recording.",
+        "I can compare and discuss differences between two performances or versions of the same piece of music.",
+        "I have never been complimented for my talents as a musical performer.",
+        "I often read or search the internet for things related to music.",
+        "Please answer this question with “Disagree“",
+        "I am not able to sing in harmony when somebody is singing a familiar tune.",
+        "I am able to identify what is special about a given musical piece.",
+        "When I sing, I have no idea whether I'm in tune or not.",
+        "Music is kind of an addiction for me - I couldn't live without it.",
+        "I don’t like singing in public because I’m afraid that I would sing wrong notes.",
+        "I would not consider myself a musician.",
+        "After hearing a new song two or three times, I can usually sing it by myself.",
+        // questions on page 2
+        "I am satisfied with the songs that are in the playlist.",
+        "The songs in the playlist match my preferences",
+        "The songs in the playlist meet my needs.",
+        "I do not like the songs in the playlist",
+        "I would give the songs in the playlist a high rating.",
+        "The playlist could become one of my favorites",
+        "I would recommend this playlist to others",
+        "Please answer this question with “Agree”",
+        "I think I would enjoy listening to the playlist",
+        "I am satisfied with the playlist",
+        "It was difficult to make a final decision on a song",
+        "Working with the group to decide on a song was easy",
+        "I had to make a lot of compromises when deciding on a song",
+        "The group was similar minded when deciding on a song",
+        "Which picture represents your relationship with the group best? The circle around 'X' represents the group, the circle around 'Me' represents you."
+      ]
+      let access_token = req.cookies.access_token;
+      let user_id = req.cookies.user_id;
+      // get track's detail
+      request.get(trackOptions(req.params.id, access_token), function (error, response, trackBody) {
+        let trackId = trackBody.id
+        // delete old popularity records if exist
+        db.query("DELETE FROM popularity25 WHERE track_id = ? ", [trackId]);
+        db.query("DELETE FROM popularity75 WHERE track_id = ? ", [trackId]);
+        // get recommendations based on popularity of 25 and 75
+        request.get(recommendationOptions(access_token, trackId, 25), function (error, response, popularity25body) {
+          randomTracks25 = []
+          randomTracks75 = []
+          // store data in popularity25 table
+          if (popularity25body.tracks) {
+            for (let index = 0; index < popularity25body.tracks.length; index++) {
+              if (popularity25body.tracks[index]) {
+                if (popularity25body.tracks[index].preview_url) {
+                  db.query("REPLACE INTO popularity25 (user_id, recommendation_id, track_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity25body.tracks[index].id, popularity25body.tracks[index].popularity])
+                  randomTracks25.push(popularity25body.tracks[index].id)
+                }
               }
             }
           }
-        }
-        console.log(randomTracks25)
-        res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75), users: JSON.stringify(randomName), surveys: JSON.stringify(surveys), recommendation_id: trackId });
+          request.get(recommendationOptions(access_token, trackId, 75), function (error, response, popularity75body) {
+            // store data in popularity75 table
+            if (popularity75body.tracks) {
+              for (let index = 0; index < popularity75body.tracks.length; index++) {
+                if (popularity75body.tracks[index]) {
+                  if (popularity75body.tracks[index].preview_url) {
+                    db.query("REPLACE INTO popularity75 (user_id, recommendation_id, track_id, popularity) VALUES (?,?,?,?)", [user_id, trackId, popularity75body.tracks[index].id, popularity75body.tracks[index].popularity])
+                    randomTracks75.push(popularity75body.tracks[index].id)
+                  }
+                }
+              }
+            }
+            console.log(randomTracks25)
+            res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75), users: JSON.stringify(randomName), surveys: JSON.stringify(surveys), recommendation_id: trackId });
+          });
+        });
       });
-    });
-  });
-
+    }
+  })
 });
 
 router.get('/', checkToken, function (req, res) {
@@ -347,6 +355,10 @@ router.post('/questions/', checkToken, function (req, res) {
 }
 );
 
+router.get('/surveys/:id', function (req, res) {
+  res.redirect('/recommendation/' + req.params.id);
+})
+
 router.post('/surveys/:id', checkToken, function (req, res) {
   let user_id = req.cookies.user_id;
   let questionObject = req.body
@@ -382,11 +394,29 @@ router.post('/surveys/:id', checkToken, function (req, res) {
   let q_29 = questionObject.q_29
   let q_30 = questionObject.q_30
   let q_31 = questionObject.q_31
-
+  let code = uid(8)
+  db.query("INSERT INTO payments (user_id, recommendation_id, code) VALUES (?,?,?)", [user_id, recommendation_id, code])
   db.query("INSERT INTO surveys (user_id, recommendation_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, recommendation_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31])
-  res.render('finish')
+  res.render('finish', { code })
 }
 );
+
+// router.get('/finish', function (req, res) {
+//   let code = uid(8)
+//   res.render('finish', { code })
+// })
+
+function uid(len) {
+  var buf = [],
+    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+    charlen = chars.length,
+    length = len;
+
+  for (var i = 0; i < length; i++) {
+    buf[i] = chars.charAt(Math.floor(Math.random() * charlen));
+  }
+  return buf.join('');
+}
 
 function hasAnsweredQuestions(req, res, next) {
   let user_id = req.cookies.user_id;
