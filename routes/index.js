@@ -255,6 +255,11 @@ router.get('/tracks', [checkToken, hasAnsweredQuestions], function (req, res) {
   // retrive top tracks
   request.get(getTopTracksOptions(access_token), function (error, response, tracks) {
     let trackSQL = tracks.items.map((track) => track.id); // construct an array of ids
+    for (let index = 0; index < 11; index++) {
+      if (!trackSQL[index]) {
+        trackSQL[index] = null
+      }
+    }
     trackSQL.unshift(user_id) // add user's id at the beginning of an array
     db.query("REPLACE INTO track (user_id, track_1, track_2, track_3, track_4, track_5, track_6, track_7, track_8, track_9, track_10) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", trackSQL);
     res.render('tracks', {
