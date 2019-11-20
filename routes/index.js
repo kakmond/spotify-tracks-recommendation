@@ -119,7 +119,6 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
   const values = [user_id, req.params.id]
   db.query(query, values, function (error, payment) {
     if (payment.length > 0) {
-      console.log(payment[0].code)
       const code = payment[0].code
       res.render('finish', { code });
     }
@@ -194,7 +193,6 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
                 }
               }
             }
-            console.log(randomTracks25)
             res.render('recommendation', { randomTracks25: JSON.stringify(randomTracks25), randomTracks75: JSON.stringify(randomTracks75), users: JSON.stringify(randomName), surveys: JSON.stringify(surveys), recommendation_id: trackId });
           });
         });
@@ -210,14 +208,14 @@ router.get('/', checkToken, function (req, res) {
   // retrive profile information
   request.get(profileOptions(access_token), function (error, response, body) {
     // store data in user table
-    db.query("REPLACE INTO user (user_id, country, access_token, refresh_token) VALUES (?,?,?,?)", [body.id, body.country, access_token, refresh_token], function (err, result) {
-      console.log(err)
-      res.render('index', {
-        display_name: body.display_name, country: body.country,
-        email: body.email, id: body.id, href: body.href, external_urls: body.external_urls,
-        images: body.images
-      });
-    })
+    db.query("INSERT INTO user (user_id, country, access_token, refresh_token) VALUE (?,?,?,?) ON DUPLICATE KEY UPDATE country = ?, access_token = ?, refresh_token = ?",
+      [body.id, body.country, access_token, refresh_token, body.country, access_token, refresh_token], function (err, result) {
+        res.render('index', {
+          display_name: body.display_name, country: body.country,
+          email: body.email, id: body.id, href: body.href, external_urls: body.external_urls,
+          images: body.images
+        });
+      })
 
   });
 });
