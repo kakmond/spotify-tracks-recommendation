@@ -10,6 +10,8 @@
             which song to add to the playlist.
         </footer>
     </div>
+    {{#if tracks.length}}
+
     <ul class="list-group list-group-flush">
         {{#each tracks}}
         <li class="media">
@@ -45,6 +47,14 @@
         </li>
         {{/each}}
     </ul>
+    {{else}}
+    <hr>
+    <div class="p-5 text-center">
+        <span class="lead text-muted">
+            No songs available.
+        </span>
+    </div>
+    {{/if}}
 </div>
 
 {{!-- <script>
