@@ -148,6 +148,32 @@
         </div>
     </div>
 
+    <!-- 30 songs limit Modal -->
+    <div class="modal fade" id="alertLimitSong" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Ooops!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">
+                        <span class="text-muted">
+                            The decision-making process with your group is taking longer than expected. This may be
+                            because you are not as compatible with each other as we hoped for. We will redirect you to
+                            the final survey
+                        </span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Got it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- group member -->
     <div id="step0" style="display: none">
         <div class="text-center py-3">
@@ -1302,7 +1328,28 @@
                 $("#addUserPlaylist").show();
                 $("#step4").show();
             } else {
-                if (randomTracks75.length <= 0 && randomTracks25.length <= 0) {
+                if (arrayIndex >= 30) {
+                    // too many times
+                    // do the survey
+                    let url = window.location.href.split('/')
+                    let songId = url[url.length - 1]
+                    let completeObject = {}
+                    completeObject.recommendation_id = songId
+                    completeObject.isCompleted = playlist.length == PLAYLIST_MAX ? true : false
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify(completeObject),
+                        contentType: 'application/json',
+                        url: '/complete'
+                    });
+                    hideAllSteps() // hide every step first
+                    currentStep = 4
+                    $("#playlist").show();
+                    $("#addUserPlaylist").show();
+                    $("#step4").show();
+                    $('#alertLimitSong').modal('show')
+                }
+                else if (randomTracks75.length <= 0 && randomTracks25.length <= 0) {
                     // no song available
                     // do the survey
                     let url = window.location.href.split('/')
