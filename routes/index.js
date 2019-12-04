@@ -30,6 +30,7 @@ db.query("CREATE TABLE IF NOT EXISTS surveys (user_id VARCHAR(36), recommendatio
 db.query("CREATE TABLE IF NOT EXISTS playlist (user_id VARCHAR(36), track_id TEXT, visibility TEXT, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS complete (user_id VARCHAR(36), recommendation_id TEXT, isCompleted BOOLEAN, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS payments (user_id VARCHAR(36), recommendation_id TEXT, code TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
+db.query("CREATE TABLE IF NOT EXISTS prolific (profile_id TEXT, link TEXT)");
 
 /**
  * Generates a random string containing numbers and letters
@@ -404,8 +405,15 @@ router.post('/surveys/:id', checkToken, function (req, res) {
 }
 );
 
+router.post('/finish', function (req, res) {
+  let code = req.body.prolific
+  let link = "https://app.prolific.co/submissions/complete?cc=" + code
+  db.query("INSERT INTO prolific (profile_id, link) VALUES (?,?)", [code, link])
+  res.render('finish2', { link })
+})
+
 // router.get('/finish', function (req, res) {
-//   let code = uid(8)
+//   let code = req.body.prolific
 //   res.render('finish', { code })
 // })
 

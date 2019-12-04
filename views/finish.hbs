@@ -3,16 +3,20 @@
         <h1 class="display-4"><span style="font-size: 38px" class="text-success">Thank you</h1>
         <hr>
         <p class="lead">
-			This is the end of the study, please follow this link to redeem your reward: <a href="https://app.prolific.co/submissions/complete?cc=3E2A4B4F">https://app.prolific.co/submissions/complete?cc=3E2A4B4F</a> 
-        //    This is the end of the study, here is your redeem code
-        //</p>
-        // <p style="font-size: 23px;">
-        //   <span class="badge badge-pill badge-dark">
-        //        {{code}}
-        //    </span>
-        //</p>
-        <p class="lead">
-            Thank you for your participation.
-        </p>
+            This is the end of the study, please enter your Prolific ID to redeem your reward:
+            <form method="POST">
+                <div class="form-row d-flex justify-content-center">
+                    <div class="form-group lead">
+                        <label class="text-success" for="inputAge">Prolific ID</label>
+                        <div class="input-group">
+                            <input required name="prolific" type="text" class="form-control" placeholder="Enter your Prolific ID"
+                                aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
     </div>
 </div>
