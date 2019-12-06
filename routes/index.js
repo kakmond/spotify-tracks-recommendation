@@ -401,6 +401,20 @@ router.post('/surveys/:id', checkToken, function (req, res) {
   let code = uid(8)
   db.query("INSERT INTO payments (user_id, recommendation_id, code) VALUES (?,?,?)", [user_id, recommendation_id, code])
   db.query("INSERT INTO surveys (user_id, recommendation_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, recommendation_id, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10, q_11, q_12, q_13, q_14, q_15, q_16, q_17, q_18, q_19, q_20, q_21, q_22, q_23, q_24, q_25, q_26, q_27, q_28, q_29, q_30, q_31])
+  //delete cookies
+  res.clearCookie("haveBeen_" + recommendation_id);
+  res.clearCookie("randomTracks25_" + recommendation_id);
+  res.clearCookie("randomTracks75_" + recommendation_id);
+  res.clearCookie("randomName_" + recommendation_id);
+  res.clearCookie("currentScore_" + recommendation_id);
+  res.clearCookie("recommendationArray_" + recommendation_id);
+  res.clearCookie("arrayIndex_" + recommendation_id);
+  res.clearCookie("currentStep_" + recommendation_id);
+  res.clearCookie("startRandomFrom_" + recommendation_id);
+  res.clearCookie("yesAnswerCount_" + recommendation_id);
+  res.clearCookie("noAnswerCount_" + recommendation_id);
+  res.clearCookie("playlist_" + recommendation_id);
+
   res.render('finish', { code })
 }
 );
