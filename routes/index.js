@@ -21,6 +21,7 @@ db.connect();
 
 // create sqlite tables
 db.query("CREATE TABLE IF NOT EXISTS user (user_id VARCHAR(36) PRIMARY KEY, country TEXT, access_token TEXT, refresh_token TEXT)");
+db.query("CREATE TABLE IF NOT EXISTS country (user_id VARCHAR(36), country TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS track (user_id VARCHAR(36) PRIMARY KEY, track_1 TEXT, track_2 TEXT, track_3 TEXT, track_4 TEXT, track_5 TEXT, track_6 TEXT, track_7 TEXT, track_8 TEXT, track_9 TEXT, track_10 TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS popularity25 (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS popularity75 (user_id VARCHAR(36), track_id TEXT, recommendation_id TEXT, popularity INTEGER, FOREIGN KEY (user_id) REFERENCES user (user_id))");
@@ -209,16 +210,19 @@ router.get('/', checkToken, function (req, res) {
 
   // retrive profile information
   request.get(profileOptions(access_token), function (error, response, body) {
-    // store data in user table
-    db.query("INSERT INTO user (user_id, country, access_token, refresh_token) VALUE (?,?,?,?) ON DUPLICATE KEY UPDATE country = ?, access_token = ?, refresh_token = ?",
-      [body.id, body.country, access_token, refresh_token, body.country, access_token, refresh_token], function (err, result) {
-        res.render('index', {
-          display_name: body.display_name, country: body.country,
-          email: body.email, id: body.id, href: body.href, external_urls: body.external_urls,
-          images: body.images
-        });
+    // store country
+    db.query("INSERT INTO country (user_id, country) VALUE (?,?) ON DUPLICATE KEY UPDATE country = ?",
+      [body.id, "UK"], function (err, result) {
+        // store data in user table
+        db.query("INSERT INTO user (user_id, country, access_token, refresh_token) VALUE (?,?,?,?) ON DUPLICATE KEY UPDATE country = ?, access_token = ?, refresh_token = ?",
+          [body.id, body.country, access_token, refresh_token, body.country, access_token, refresh_token], function (err, result) {
+            res.render('index', {
+              display_name: body.display_name, country: body.country,
+              email: body.email, id: body.id, href: body.href, external_urls: body.external_urls,
+              images: body.images
+            });
+          })
       })
-
   });
 });
 
