@@ -4,8 +4,8 @@ var router = express.Router();
 var request = require('request');
 var querystring = require('querystring');
 
-var client_id = 'effb4e77d8764a29a23dc735f6f11dfa'; // Your client id
-var client_secret = 'ef52e8965b47466e812d2d3ce761e582'; // Your secret
+var client_id = '0dbf9e1d121f43ae80a52c078ccc7ca2'; // Your client id
+var client_secret = 'bc08cf8fb2ca4f9e92bac45a98a3cc78'; // Your secret
 var redirect_uri = 'https://spotify-group1.herokuapp.com/callback'; // Your redirect uri
 // var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 
