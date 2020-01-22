@@ -210,12 +210,12 @@ router.get('/', checkToken, function (req, res) {
 
   // retrive profile information
   request.get(profileOptions(access_token), function (error, response, body) {
-    // store country
-    db.query("INSERT INTO country (user_id, country) VALUE (?,?) ON DUPLICATE KEY UPDATE country = ?",
-      [body.id, "UK"], function (err, result) {
-        // store data in user table
-        db.query("INSERT INTO user (user_id, country, access_token, refresh_token) VALUE (?,?,?,?) ON DUPLICATE KEY UPDATE country = ?, access_token = ?, refresh_token = ?",
-          [body.id, body.country, access_token, refresh_token, body.country, access_token, refresh_token], function (err, result) {
+    // store data in user table
+    db.query("INSERT INTO user (user_id, country, access_token, refresh_token) VALUE (?,?,?,?) ON DUPLICATE KEY UPDATE country = ?, access_token = ?, refresh_token = ?",
+      [body.id, body.country, access_token, refresh_token, body.country, access_token, refresh_token], function (err, result) {
+        // store country
+        db.query("INSERT INTO country (user_id, country) VALUE (?,?) ON DUPLICATE KEY UPDATE country = ?",
+          [body.id, "UK"], function (err, result) {
             res.render('index', {
               display_name: body.display_name, country: body.country,
               email: body.email, id: body.id, href: body.href, external_urls: body.external_urls,
@@ -223,6 +223,7 @@ router.get('/', checkToken, function (req, res) {
             });
           })
       })
+
   });
 });
 
