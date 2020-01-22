@@ -121,7 +121,8 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
   db.query(query, values, function (error, payment) {
     if (payment.length > 0) {
       const code = payment[0].code
-      res.render('finish', { code });
+      // res.render('finish', { code });
+      res.redirect('/reward/' + req.params.id)
     }
     else {
       let randomName = ['James', 'Sara', 'Emma', 'Steve']
@@ -415,16 +416,17 @@ router.post('/surveys/:id', checkToken, function (req, res) {
   res.clearCookie("noAnswerCount_" + recommendation_id);
   res.clearCookie("playlist_" + recommendation_id);
 
-  res.render('finish', { code })
+  // res.render('finish', { code })
+  res.redirect('/reward/' + recommendation_id)
 }
 );
 
-router.post('/finish', function (req, res) {
-  let code = req.body.prolific
-  let link = "https://app.prolific.co/submissions/complete?cc=" + code
-  db.query("INSERT INTO prolific (profile_id, link) VALUES (?,?)", [code, link])
-  res.render('finish2', { link })
-})
+// router.post('/finish', function (req, res) {
+//   let code = req.body.prolific
+//   let link = "https://app.prolific.co/submissions/complete?cc=" + code
+//   db.query("INSERT INTO prolific (profile_id, link) VALUES (?,?)", [code, link])
+//   res.render('finish2', { link })
+// })
 
 // router.get('/finish', function (req, res) {
 //   let code = req.body.prolific
@@ -499,6 +501,22 @@ router.post('/complete/', checkToken, function (req, res) {
     [user_id, recommendation_id, isCompleted])
 }
 );
+
+router.get('/reward/:id', function (req, res) {
+  let user_id = req.cookies.user_id;
+  let recommendation_id = req.params.id
+  const query = `SELECT * FROM complete WHERE user_id = ? AND recommendation_id = ?`
+  const values = [user_id, recommendation_id]
+  db.query(query, values, function (error, complete) {
+    if (complete.length > 0 && complete[0].isCompleted) {
+      // res.render('finish');
+      res.redirect('https://passback.lifepointspanel.com/Survey/Complete?ProjectToken=97128d3c-6312-4a4b-91cb-d66d7a77bc1d')
+    }
+    else {
+      res.redirect('https://passback.lifepointspanel.com/Survey/Finished?ProjectToken=dcf47fc5-debd-7fcb-3c3f-ad7c4ec289e0')
+    }
+  })
+})
 
 
 module.exports = router;

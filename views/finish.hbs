@@ -1,10 +1,18 @@
+<script>
+    let url = window.location.href.split('/')
+    let songId = url[url.length - 1]
+    });
+</script>
+
 <div class="container pt-4">
     <div class="jumbotron text-center">
         <h1 class="display-4"><span style="font-size: 38px" class="text-success">Thank you</h1>
         <hr>
         <p class="lead">
-            This is the end of the study, please enter your Prolific ID to redeem your reward:
-            <form method="POST">
+            This is the end of the study, click
+            <a href="/">here</a>
+            to redeem your reward
+            {{!-- <form method="POST">
                 <div class="form-row d-flex justify-content-center">
                     <div class="form-group lead">
                         <label class="text-success" for="inputAge">Prolific ID</label>
@@ -17,6 +25,6 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            </form> --}}
     </div>
 </div>
