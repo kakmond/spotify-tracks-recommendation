@@ -75,7 +75,7 @@ function trackOptions(trackId, access_token) {
 
 function getTopTracksOptions(access_token) {
   return {
-    url: 'https://api.spotify.com/v1/me/top/tracks?limit=10',
+    url: 'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=10',
     headers: { 'Authorization': 'Bearer ' + access_token },
     json: true,
   }
