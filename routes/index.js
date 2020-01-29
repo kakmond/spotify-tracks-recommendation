@@ -122,8 +122,8 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
   db.query(query, values, function (error, payment) {
     if (payment.length > 0) {
       const code = payment[0].code
-      // res.render('finish', { code });
-      res.redirect('/reward/' + req.params.id)
+      res.render('finish', { code });
+      // res.redirect('/reward/' + req.params.id)
     }
     else {
       let randomName = ['James', 'Sara', 'Emma', 'Steve']
@@ -361,7 +361,10 @@ router.post('/questions/', checkToken, function (req, res) {
   let q_9 = questionObject.q_9
   let q_10 = questionObject.q_10
   db.query("INSERT INTO questions (user_id, age, gender, home_country, like_country, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_id, age, gender, home_country, like_country, q_1, q_2, q_3, q_4, q_5, q_6, q_7, q_8, q_9, q_10])
-  res.redirect('/tracks')
+  if (age < 18)
+    res.redirect('https://passback.lifepointspanel.com/Survey/EarlyScreenOut?ProjectToken=dcf47fc5-debd-7fcb-3c3f-ad7c4ec289e0')
+  else
+    res.redirect('/tracks')
 }
 );
 
@@ -510,15 +513,14 @@ router.post('/complete/', checkToken, function (req, res) {
 router.get('/reward/:id', function (req, res) {
   let user_id = req.cookies.user_id;
   let recommendation_id = req.params.id
-  const query = `SELECT * FROM complete WHERE user_id = ? AND recommendation_id = ?`
+  const query = `SELECT * FROM recommendation WHERE user_id = ? AND recommendation_id = ?`
   const values = [user_id, recommendation_id]
   db.query(query, values, function (error, complete) {
-    if (complete.length > 0 && complete[0].isCompleted) {
-      // res.render('finish');
-      res.redirect('https://passback.lifepointspanel.com/Survey/Complete?ProjectToken=97128d3c-6312-4a4b-91cb-d66d7a77bc1d')
+    if (complete.length <= 0) {
+      res.redirect('https://passback.lifepointspanel.com/Survey/EarlyScreenOut?ProjectToken=dcf47fc5-debd-7fcb-3c3f-ad7c4ec289e0')
     }
     else {
-      res.redirect('https://passback.lifepointspanel.com/Survey/Finished?ProjectToken=dcf47fc5-debd-7fcb-3c3f-ad7c4ec289e0')
+      res.redirect('https://passback.lifepointspanel.com/Survey/Complete?ProjectToken=97128d3c-6312-4a4b-91cb-d66d7a77bc1d')
     }
   })
 })
