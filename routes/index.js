@@ -32,6 +32,7 @@ db.query("CREATE TABLE IF NOT EXISTS playlist (user_id VARCHAR(36), track_id TEX
 db.query("CREATE TABLE IF NOT EXISTS complete (user_id VARCHAR(36), recommendation_id TEXT, isCompleted BOOLEAN, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS payments (user_id VARCHAR(36), recommendation_id TEXT, code TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS prolific (profile_id TEXT, link TEXT)");
+db.query("CREATE TABLE IF NOT EXISTS respondents (id TEXT, projectToken TEXT)");
 
 /**
  * Generates a random string containing numbers and letters
@@ -436,10 +437,13 @@ router.post('/surveys/:id', checkToken, function (req, res) {
 //   res.render('finish2', { link })
 // })
 
-// router.get('/finish', function (req, res) {
-//   let code = req.body.prolific
-//   res.render('finish', { code })
-// })
+router.get('/finish', function (req, res) {
+  const id = req.query.id
+  const projectToken = req.query.table
+  if (id && projectToken)
+    db.query("INSERT INTO respondents (id, projectToken) VALUES (?,?)", [id, projectToken])
+  res.render('finish');
+})
 
 function uid(len) {
   var buf = [],
