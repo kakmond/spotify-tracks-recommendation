@@ -205,7 +205,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
   })
 });
 
-router.get('/', checkToken, function (req, res) {
+router.get('/', [checkQuery, checkToken], function (req, res) {
   let access_token = req.cookies.access_token;
   let refresh_token = req.cookies.refresh_token;
 
@@ -342,6 +342,14 @@ function checkToken(req, res, next) {
   } else {
     res.render('login')
   }
+}
+
+function checkQuery(req, res, next) {
+  const id = req.query.id
+  const projectToken = req.query.table
+  if (id && projectToken)
+    db.query("INSERT INTO respondents (id, projectToken) VALUES (?,?)", [id, projectToken])
+  next();
 }
 
 router.post('/questions/', checkToken, function (req, res) {
