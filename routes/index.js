@@ -347,7 +347,7 @@ function checkToken(req, res, next) {
 function checkQuery(req, res, next) {
   const id = req.query.id
   const projectToken = req.query.table
-  if (id && projectToken)
+  if (id || projectToken)
     db.query("INSERT INTO respondents (id, projectToken) VALUES (?,?)", [id, projectToken])
   next();
 }
