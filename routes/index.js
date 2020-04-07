@@ -6,8 +6,8 @@ var querystring = require('querystring');
 
 var client_id = '0dbf9e1d121f43ae80a52c078ccc7ca2'; // Your client id
 var client_secret = 'bc08cf8fb2ca4f9e92bac45a98a3cc78'; // Your secret
-var redirect_uri = 'https://spotify-group1.herokuapp.com/callback'; // Your redirect uri
-// var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+// var redirect_uri = 'https://spotify-group1.herokuapp.com/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
 
 var mysql = require('mysql');
 var db = mysql.createConnection({
@@ -33,6 +33,8 @@ db.query("CREATE TABLE IF NOT EXISTS complete (user_id VARCHAR(36), recommendati
 db.query("CREATE TABLE IF NOT EXISTS payments (user_id VARCHAR(36), recommendation_id TEXT, code TEXT, FOREIGN KEY (user_id) REFERENCES user (user_id))");
 db.query("CREATE TABLE IF NOT EXISTS prolific (profile_id TEXT, link TEXT)");
 db.query("CREATE TABLE IF NOT EXISTS respondents (id TEXT, projectToken TEXT)");
+db.query("CREATE TABLE IF NOT EXISTS respondents2 (id TEXT, projectToken TEXT, user_id TEXT)");
+
 
 /**
  * Generates a random string containing numbers and letters
@@ -137,7 +139,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
         "I can compare and discuss differences between two performances or versions of the same piece of music.",
         "I have never been complimented for my talents as a musical performer.",
         "I often read or search the internet for things related to music.",
-        "Please answer this question with “Disagree“",
+        "Please answer this question with 2",
         "I am not able to sing in harmony when somebody is singing a familiar tune.",
         "I am able to identify what is special about a given musical piece.",
         "When I sing, I have no idea whether I'm in tune or not.",
@@ -153,7 +155,7 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
         "I would give the songs in the playlist a high rating.",
         "The playlist could become one of my favorites",
         "I would recommend this playlist to others",
-        "Please answer this question with “Agree”",
+        "Please answer this question with 4",
         "I think I would enjoy listening to the playlist",
         "I am satisfied with the playlist",
         "It was difficult to make a final decision on a song",
@@ -205,10 +207,15 @@ router.get('/recommendation/:id', checkToken, function (req, res) {
   })
 });
 
-router.get('/', [checkQuery, checkToken], function (req, res) {
+router.get('/', [checkToken], function (req, res) {
+  // const query = `SELECT * FROM respondents2`
+  // db.query(query, function (err, result) {
+  //   console.log(result)
+  // })
   let access_token = req.cookies.access_token;
   let refresh_token = req.cookies.refresh_token;
-
+  const id = req.query.id
+  const projectToken = req.query.table
   // retrive profile information
   request.get(profileOptions(access_token), function (error, response, body) {
     // store data in user table
@@ -217,14 +224,16 @@ router.get('/', [checkQuery, checkToken], function (req, res) {
         // store country
         db.query("INSERT INTO country (user_id, country) VALUE (?,?) ON DUPLICATE KEY UPDATE country = ?",
           [body.id, "UK", "UK"], function (err, result) {
-            res.render('index', {
-              display_name: body.display_name, country: body.country,
-              email: body.email, id: body.id, href: body.href, external_urls: body.external_urls,
-              images: body.images
-            });
+            if (id || projectToken)
+              db.query("INSERT INTO respondents2 (id, projectToken, user_id) VALUES (?,?,?)", [id, projectToken, body.id], function (err, result) {
+                res.render('index', {
+                  display_name: body.display_name, country: body.country,
+                  email: body.email, id: body.id, href: body.href, external_urls: body.external_urls,
+                  images: body.images
+                });
+              })
           })
       })
-
   });
 });
 
@@ -344,13 +353,13 @@ function checkToken(req, res, next) {
   }
 }
 
-function checkQuery(req, res, next) {
-  const id = req.query.id
-  const projectToken = req.query.table
-  if (id || projectToken)
-    db.query("INSERT INTO respondents (id, projectToken) VALUES (?,?)", [id, projectToken])
-  next();
-}
+// function checkQuery(req, res, next) {
+// const id = req.query.id
+// const projectToken = req.query.table
+// if (id || projectToken)
+//   db.query("INSERT INTO respondents (id, projectToken) VALUES (?,?)", [id, projectToken])
+// next();
+// }
 
 router.post('/questions/', checkToken, function (req, res) {
   let questionObject = req.body
