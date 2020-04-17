@@ -232,6 +232,12 @@ router.get('/', [checkToken], function (req, res) {
                   images: body.images
                 });
               })
+            else
+              res.render('index', {
+                display_name: body.display_name, country: body.country,
+                email: body.email, id: body.id, href: body.href, external_urls: body.external_urls,
+                images: body.images
+              });
           })
       })
   });
