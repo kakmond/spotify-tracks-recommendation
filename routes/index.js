@@ -214,8 +214,10 @@ router.get('/', [checkToken], function (req, res) {
   // })
   let access_token = req.cookies.access_token;
   let refresh_token = req.cookies.refresh_token;
-  const id = req.query.id
-  const projectToken = req.query.table
+  const id = req.query.id || req.cookies.id
+  const projectToken = req.query.table || req.cookies.projectToken;
+  res.clearCookie('id');
+  res.clearCookie('projectToken');
   // retrive profile information
   request.get(profileOptions(access_token), function (error, response, body) {
     // store data in user table
@@ -224,7 +226,7 @@ router.get('/', [checkToken], function (req, res) {
         // store country
         db.query("INSERT INTO country (user_id, country) VALUE (?,?) ON DUPLICATE KEY UPDATE country = ?",
           [body.id, "UK", "UK"], function (err, result) {
-            if (id || projectToken)
+            if (id || projectToken) {
               db.query("INSERT INTO respondents2 (id, projectToken, user_id) VALUES (?,?,?)", [id, projectToken, body.id], function (err, result) {
                 res.render('index', {
                   display_name: body.display_name, country: body.country,
@@ -232,6 +234,7 @@ router.get('/', [checkToken], function (req, res) {
                   images: body.images
                 });
               })
+            }
             else
               res.render('index', {
                 display_name: body.display_name, country: body.country,
@@ -343,11 +346,15 @@ router.post('/recommendation/', checkToken, function (req, res) {
 );
 
 function checkToken(req, res, next) {
+  const id = req.query.id
+  const projectToken = req.query.table
   let token = req.cookies.access_token;
   if (token) {
     // try to retrive profile information
     request.get(profileOptions(token), function (error, response, body) {
       if (error || body.error) {
+        res.cookie('id', id);
+        res.cookie('projectToken', projectToken);
         res.render('login')
       }
       else {
@@ -355,6 +362,8 @@ function checkToken(req, res, next) {
       }
     });
   } else {
+    res.cookie('id', id);
+    res.cookie('projectToken', projectToken);
     res.render('login')
   }
 }
